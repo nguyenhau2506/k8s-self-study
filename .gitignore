@@ -8,3 +8,12 @@ Thumbs.db
 # Upstream CKA course labs are referenced, not bundled:
 # https://github.com/kodekloudhub/certified-kubernetes-administrator-course
 certified-kubernetes-administrator-course-master/
+
+# Docusaurus / Node
+/node_modules
+/build
+/.docusaurus
+/.cache-loader
+.env.local
+.env.*.local
+npm-debug.log*

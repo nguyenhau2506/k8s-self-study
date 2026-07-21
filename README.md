@@ -46,8 +46,8 @@
 
 | Tài liệu | Nội dung chính |
 |-----------|----------------|
-| 1.1 [Docker & containerd](introduction/01-Dockers-containerD.md) | Sự tiến hóa từ Docker → containerd — Dockershim, CRI, kiến trúc runtime hiện đại |
-| 1.2 [Kubernetes Architecture](introduction/02-k8s-architecture.md) | Control Plane & Worker Node — kube-apiserver, etcd, scheduler, controller-manager, kubelet, kube-proxy |
+| 1.1 [Docker & containerd](docs/introduction/01-Dockers-containerD.md) | Sự tiến hóa từ Docker → containerd — Dockershim, CRI, kiến trúc runtime hiện đại |
+| 1.2 [Kubernetes Architecture](docs/introduction/02-k8s-architecture.md) | Control Plane & Worker Node — kube-apiserver, etcd, scheduler, controller-manager, kubelet, kube-proxy |
 
 ---
 
@@ -59,34 +59,34 @@
 
 | Tài liệu | Nội dung chính |
 |-----------|----------------|
-| 2.1 [kube-apiserver](core-concept/master-node/01-kube-api.md) | REST API gateway — điểm tiếp nhận duy nhất cho mọi request, xác thực, ủy quyền, admission control |
-| 2.2 [etcd](core-concept/master-node/02-etcd.md) | Distributed key-value store — Single Source of Truth cho toàn bộ trạng thái cluster |
-| 2.3 [kube-scheduler](core-concept/master-node/03-kube-scheduler.md) | Lập lịch Pod vào Node dựa trên tài nguyên, ràng buộc & chính sách |
-| 2.4 [kube-controller-manager](core-concept/master-node/04-kube-controller-manager.md) | Quản lý các controller loop — giám sát & duy trì desired state |
+| 2.1 [kube-apiserver](docs/core-concept/master-node/01-kube-api.md) | REST API gateway — điểm tiếp nhận duy nhất cho mọi request, xác thực, ủy quyền, admission control |
+| 2.2 [etcd](docs/core-concept/master-node/02-etcd.md) | Distributed key-value store — Single Source of Truth cho toàn bộ trạng thái cluster |
+| 2.3 [kube-scheduler](docs/core-concept/master-node/03-kube-scheduler.md) | Lập lịch Pod vào Node dựa trên tài nguyên, ràng buộc & chính sách |
+| 2.4 [kube-controller-manager](docs/core-concept/master-node/04-kube-controller-manager.md) | Quản lý các controller loop — giám sát & duy trì desired state |
 
 ### 🟢 Workloads & Networking
 
 | Tài liệu | Nội dung chính |
 |-----------|----------------|
-| 2.5 [Pod](core-concept/worker-node/05-kube-pod.md) | Đơn vị triển khai nhỏ nhất — chứa một hoặc nhiều container cùng chia sẻ network/storage |
-| 2.6 [ReplicaController & ReplicaSet](core-concept/master-node/06-replica-controller.md) | Đảm bảo số lượng Pod replica luôn đúng với desired state |
-| 2.7 [Deployment](core-concept/master-node/07-deployment.md) | Quản lý vòng đời ứng dụng — rolling update, rollback, scaling |
-| 2.8 [Services](core-concept/master-node/08-services.md) | ClusterIP · NodePort · LoadBalancer — expose ứng dụng qua mạng nội bộ & bên ngoài |
-| 2.9 [Ingress](core-concept/master-node/09-ingress.md) | Quản lý traffic HTTP/HTTPS từ bên ngoài vào cluster với routing rules |
-| 2.10 [Namespace](core-concept/master-node/10-namespace.md) | Phân vùng logic tài nguyên — cô lập môi trường dev/staging/prod |
+| 2.5 [Pod](docs/core-concept/worker-node/05-kube-pod.md) | Đơn vị triển khai nhỏ nhất — chứa một hoặc nhiều container cùng chia sẻ network/storage |
+| 2.6 [ReplicaController & ReplicaSet](docs/core-concept/master-node/06-replica-controller.md) | Đảm bảo số lượng Pod replica luôn đúng với desired state |
+| 2.7 [Deployment](docs/core-concept/master-node/07-deployment.md) | Quản lý vòng đời ứng dụng — rolling update, rollback, scaling |
+| 2.8 [Services](docs/core-concept/master-node/08-services.md) | ClusterIP · NodePort · LoadBalancer — expose ứng dụng qua mạng nội bộ & bên ngoài |
+| 2.9 [Ingress](docs/core-concept/master-node/09-ingress.md) | Quản lý traffic HTTP/HTTPS từ bên ngoài vào cluster với routing rules |
+| 2.10 [Namespace](docs/core-concept/master-node/10-namespace.md) | Phân vùng logic tài nguyên — cô lập môi trường dev/staging/prod |
 
 ### 🟡 Worker Node
 
 | Tài liệu | Nội dung chính |
 |-----------|----------------|
-| 2.11 [kubelet](core-concept/worker-node/11-kubelet.md) | Agent trên mỗi Node — đảm bảo container hoạt động đúng PodSpec |
-| 2.12 [kube-proxy](core-concept/worker-node/12-kube-proxy.md) | Duy trì network rules (iptables/IPVS) — cho phép Pod giao tiếp trong & ngoài cluster |
+| 2.11 [kubelet](docs/core-concept/worker-node/11-kubelet.md) | Agent trên mỗi Node — đảm bảo container hoạt động đúng PodSpec |
+| 2.12 [kube-proxy](docs/core-concept/worker-node/12-kube-proxy.md) | Duy trì network rules (iptables/IPVS) — cho phép Pod giao tiếp trong & ngoài cluster |
 
 ### 💾 Storage
 
 | Tài liệu | Nội dung chính |
 |-----------|----------------|
-| 2.13 [Volumes](core-concept/storage/13-volumes.md) | emptyDir · hostPath · PV/PVC — lưu trữ persistent data cho container |
+| 2.13 [Volumes](docs/core-concept/storage/13-volumes.md) | emptyDir · hostPath · PV/PVC — lưu trữ persistent data cho container |
 
 ---
 
@@ -96,16 +96,16 @@
 
 | Tài liệu | Nội dung chính |
 |-----------|----------------|
-| 3.1 [Manual Scheduling](scheduling/01-manual-scheduling.md) | Chỉ định trực tiếp Node cho Pod qua `nodeName` |
-| 3.2 [Labels & Selectors](scheduling/02-label-selector.md) | Gán nhãn & lọc tài nguyên — nền tảng cho mọi cơ chế scheduling |
-| 3.3 [Taints & Tolerations](scheduling/03-taints-and-tolerations.md) | Cơ chế **"đẩy"** — ngăn Pod chạy trên Node không phù hợp (NoSchedule, PreferNoSchedule, NoExecute) |
-| 3.4 [Affinity](scheduling/04-affinity.md) | Node Affinity & Pod Affinity — cơ chế **"hút"** Pod vào Node mong muốn |
-| 3.5 [Resource Requests & Limits](scheduling/05-resource-requests-and-limits.md) | Quản lý CPU/Memory — requests, limits & QoS classes (Guaranteed, Burstable, BestEffort) |
-| 3.6 [DaemonSet](scheduling/06-daemonset.md) | Đảm bảo một Pod chạy trên **mỗi** Node — logging, monitoring, networking agents |
-| 3.7 [Static Pod](scheduling/07-static-pod.md) | Pod được kubelet quản lý trực tiếp từ local manifest — không qua API Server |
-| 3.8 [Priority Classes](scheduling/08-priority-classes.md) | Thiết lập mức ưu tiên & preemption khi cluster thiếu tài nguyên |
-| 3.9 [Multiple Schedulers](scheduling/09-multiple-schedulers.md) | Chạy nhiều scheduler song song — chọn scheduler bằng `spec.schedulerName`, phù hợp cho workload đặc thù hoặc chiến lược scheduling riêng |
-| 3.10 [Admission Controller](scheduling/10-admission-controller.md) | Kiểm soát request sau Authentication/Authorization — Mutating & Validating webhooks |
+| 3.1 [Manual Scheduling](docs/scheduling/01-manual-scheduling.md) | Chỉ định trực tiếp Node cho Pod qua `nodeName` |
+| 3.2 [Labels & Selectors](docs/scheduling/02-label-selector.md) | Gán nhãn & lọc tài nguyên — nền tảng cho mọi cơ chế scheduling |
+| 3.3 [Taints & Tolerations](docs/scheduling/03-taints-and-tolerations.md) | Cơ chế **"đẩy"** — ngăn Pod chạy trên Node không phù hợp (NoSchedule, PreferNoSchedule, NoExecute) |
+| 3.4 [Affinity](docs/scheduling/04-affinity.md) | Node Affinity & Pod Affinity — cơ chế **"hút"** Pod vào Node mong muốn |
+| 3.5 [Resource Requests & Limits](docs/scheduling/05-resource-requests-and-limits.md) | Quản lý CPU/Memory — requests, limits & QoS classes (Guaranteed, Burstable, BestEffort) |
+| 3.6 [DaemonSet](docs/scheduling/06-daemonset.md) | Đảm bảo một Pod chạy trên **mỗi** Node — logging, monitoring, networking agents |
+| 3.7 [Static Pod](docs/scheduling/07-static-pod.md) | Pod được kubelet quản lý trực tiếp từ local manifest — không qua API Server |
+| 3.8 [Priority Classes](docs/scheduling/08-priority-classes.md) | Thiết lập mức ưu tiên & preemption khi cluster thiếu tài nguyên |
+| 3.9 [Multiple Schedulers](docs/scheduling/09-multiple-schedulers.md) | Chạy nhiều scheduler song song — chọn scheduler bằng `spec.schedulerName`, phù hợp cho workload đặc thù hoặc chiến lược scheduling riêng |
+| 3.10 [Admission Controller](docs/scheduling/10-admission-controller.md) | Kiểm soát request sau Authentication/Authorization — Mutating & Validating webhooks |
 
 ---
 
@@ -115,12 +115,12 @@
 
 | Tài liệu | Nội dung chính |
 |-----------|----------------|
-| 4.1 [Rolling Update & Rollback](application-manager/01-rolling-update-and-rollback.md) | Chiến lược zero-downtime deployment — maxSurge, maxUnavailable & rollback nhanh |
-| 4.2 [Command & Args](application-manager/02-commands-and-args.md) | Tùy chỉnh entrypoint & arguments cho container (so sánh CMD/ENTRYPOINT của Docker) |
-| 4.3 [ConfigMap](application-manager/03-config-map.md) | Lưu trữ cấu hình dạng key-value — tách configuration khỏi container image |
-| 4.4 [Secret](application-manager/04-secret.md) | Quản lý dữ liệu nhạy cảm — password, token, TLS keys (base64 encoded) |
-| 4.5 [Multi-Container Pod](application-manager/05-multi-container-pod.md) | Sidecar · Ambassador · Adapter & Init Container patterns |
-| 4.6 [HPA & VPA](application-manager/06-hpa-and-vpa.md) | Horizontal & Vertical Pod Autoscaler — tự động scale theo CPU/Memory/Custom metrics |
+| 4.1 [Rolling Update & Rollback](docs/application-manager/01-rolling-update-and-rollback.md) | Chiến lược zero-downtime deployment — maxSurge, maxUnavailable & rollback nhanh |
+| 4.2 [Command & Args](docs/application-manager/02-commands-and-args.md) | Tùy chỉnh entrypoint & arguments cho container (so sánh CMD/ENTRYPOINT của Docker) |
+| 4.3 [ConfigMap](docs/application-manager/03-config-map.md) | Lưu trữ cấu hình dạng key-value — tách configuration khỏi container image |
+| 4.4 [Secret](docs/application-manager/04-secret.md) | Quản lý dữ liệu nhạy cảm — password, token, TLS keys (base64 encoded) |
+| 4.5 [Multi-Container Pod](docs/application-manager/05-multi-container-pod.md) | Sidecar · Ambassador · Adapter & Init Container patterns |
+| 4.6 [HPA & VPA](docs/application-manager/06-hpa-and-vpa.md) | Horizontal & Vertical Pod Autoscaler — tự động scale theo CPU/Memory/Custom metrics |
 
 ---
 
@@ -130,10 +130,10 @@
 
 | Tài liệu | Nội dung chính |
 |-----------|----------------|
-| 5.1 [OS Upgrade](cluster%20maintenance/01-os-upgrade.md) | Quy trình `drain` → `cordon` → `uncordon` Node khi bảo trì OS, Pod eviction timeout |
-| 5.2 [Version Skew Policy](cluster%20maintenance/02-k8s-release-policy.md) | Chính sách chênh lệch phiên bản — quy tắc tương thích giữa API Server, Scheduler, kubelet & kubectl |
-| 5.3 [Cluster Upgrade với kubeadm](cluster%20maintenance/03-demo-upgrade.md) | Quy trình nâng cấp cluster từng bước — Control Plane trước, Worker Node sau, cheat-sheet copy-paste cho CKA |
-| 5.4 [Backup & Restore](cluster%20maintenance/04-backup-restore.md) | Backup etcd snapshot & Resource Config — `etcdctl snapshot save/restore`, Velero, quy trình restore an toàn |
+| 5.1 [OS Upgrade](docs/cluster-maintenance/01-os-upgrade.md) | Quy trình `drain` → `cordon` → `uncordon` Node khi bảo trì OS, Pod eviction timeout |
+| 5.2 [Version Skew Policy](docs/cluster-maintenance/02-k8s-release-policy.md) | Chính sách chênh lệch phiên bản — quy tắc tương thích giữa API Server, Scheduler, kubelet & kubectl |
+| 5.3 [Cluster Upgrade với kubeadm](docs/cluster-maintenance/03-demo-upgrade.md) | Quy trình nâng cấp cluster từng bước — Control Plane trước, Worker Node sau, cheat-sheet copy-paste cho CKA |
+| 5.4 [Backup & Restore](docs/cluster-maintenance/04-backup-restore.md) | Backup etcd snapshot & Resource Config — `etcdctl snapshot save/restore`, Velero, quy trình restore an toàn |
 
 ---
 
@@ -143,26 +143,26 @@
 
 | Tài liệu | Nội dung chính |
 |-----------|----------------|
-| 6.1 [Security Primitives](security/01-security-primitives.md) | Tổng quan bảo mật nhiều lớp — Host Security, kube-apiserver, TLS, Network Policy, RBAC overview |
-| 6.2 [TLS Basics](security/02-tls-basic.md) | Nền tảng mã hóa — Symmetric vs Asymmetric, TLS Handshake, Certificate, CA, PKI, naming conventions |
-| 6.3 [Authentication](security/03-authentication.md) | Xác thực người dùng — TLS Certificate workflow, kubeconfig, Service Account, OIDC |
-| 6.4 [Authorization & RBAC](security/04-authorization-rbac.md) | Phân quyền RBAC — Role, ClusterRole, RoleBinding, ClusterRoleBinding, built-in roles, `auth can-i` |
-| 6.5 [TLS & Certificates (PKI)](security/05-tls-certificates.md) | Hệ thống PKI nội bộ — vị trí cert, kiểm tra hết hạn, gia hạn với kubeadm, CSR API |
-| 6.6 [TLS trong Kubernetes](security/06-tls-k8s.md) | Cách Kubernetes dùng TLS giữa các thành phần — CA, server cert, client cert, SANs, mTLS |
-| 6.7 [Tạo Certificates cho Kubernetes](security/07-tls-k8s-creation.md) | Quy trình tạo CA, server cert, client cert bằng OpenSSL cho cluster tự dựng |
-| 6.8 [Xem chi tiết Certificates](security/08-tls-k8s-view-detail.md) | Cách kiểm tra CN, SANs, issuer, expiration và vị trí cert trong cluster |
-| 6.9 [Certificates API](security/09-certificate-api.md) | Quản lý CSR bằng Kubernetes API — approve, deny, extract certificate, thay vì ký tay trực tiếp |
-| 6.10 [Kubeconfig](security/10-kubeconfig.md) | File cấu hình truy cập cluster của kubectl — clusters, users, contexts, current-context, namespace |
-| 6.11 [API Groups](security/11-apiGroup.md) | Cấu trúc Kubernetes API — core group, named groups, resources, verbs, và mối liên hệ với RBAC |
-| 6.12 [Authorization](security/12-authorization.md) | Cơ chế phân quyền trong Kubernetes — AlwaysAllow, AlwaysDeny, ABAC, RBAC, Node Authorizer, Webhook |
-| 6.13 [RBAC](security/13-rbac.md) | Đi sâu vào Role, RoleBinding, subjects, roleRef, rules và cách kiểm tra quyền bằng `kubectl auth can-i` |
-| 6.14 [ClusterRole & ClusterRoleBinding](security/14-clusterRole.md) | Phân quyền ở mức cluster — cluster-scoped resources, all namespaces, và khác biệt với Role/RoleBinding |
-| 6.15 [ServiceAccount](security/15-serviceaccount.md) | Danh tính cho ứng dụng trong cluster — token, projected volume, `serviceAccountName`, `kubectl create token` |
-| 6.16 [Image Pull Secret](security/16-imageSecret.md) | Dùng private registry trong Kubernetes — `docker-registry` secret, `imagePullSecrets`, và lỗi `ErrImagePull` / `ImagePullBackOff` |
-| 6.17 [Docker Security Basics](security/17-dockerSecurity.md) | Nền tảng container security — namespace, root vs non-root, Linux capabilities, `--cap-add`, `--cap-drop`, `--privileged` |
-| 6.18 [Security Context](security/18-securityContext.md) | Cấu hình security ở Pod/container level — `runAsUser`, `runAsNonRoot`, capabilities, privileged, override rules |
-| 6.19 [NetworkPolicy](security/19-networkPolicy.md) | Kiểm soát traffic giữa các Pod — ingress, egress, podSelector, policyTypes, và yêu cầu CNI support |
-| 6.20 [Developing Network Policies](security/20-developingNetworkPolicies.md) | Đi sâu vào cách viết rule đúng — `podSelector` + `namespaceSelector`, `ipBlock`, logic AND/OR, ingress vs egress thực chiến |
+| 6.1 [Security Primitives](docs/security/01-security-primitives.md) | Tổng quan bảo mật nhiều lớp — Host Security, kube-apiserver, TLS, Network Policy, RBAC overview |
+| 6.2 [TLS Basics](docs/security/02-tls-basic.md) | Nền tảng mã hóa — Symmetric vs Asymmetric, TLS Handshake, Certificate, CA, PKI, naming conventions |
+| 6.3 [Authentication](docs/security/03-authentication.md) | Xác thực người dùng — TLS Certificate workflow, kubeconfig, Service Account, OIDC |
+| 6.4 [Authorization & RBAC](docs/security/04-authorization-rbac.md) | Phân quyền RBAC — Role, ClusterRole, RoleBinding, ClusterRoleBinding, built-in roles, `auth can-i` |
+| 6.5 [TLS & Certificates (PKI)](docs/security/05-tls-certificates.md) | Hệ thống PKI nội bộ — vị trí cert, kiểm tra hết hạn, gia hạn với kubeadm, CSR API |
+| 6.6 [TLS trong Kubernetes](docs/security/06-tls-k8s.md) | Cách Kubernetes dùng TLS giữa các thành phần — CA, server cert, client cert, SANs, mTLS |
+| 6.7 [Tạo Certificates cho Kubernetes](docs/security/07-tls-k8s-creation.md) | Quy trình tạo CA, server cert, client cert bằng OpenSSL cho cluster tự dựng |
+| 6.8 [Xem chi tiết Certificates](docs/security/08-tls-k8s-view-detail.md) | Cách kiểm tra CN, SANs, issuer, expiration và vị trí cert trong cluster |
+| 6.9 [Certificates API](docs/security/09-certificate-api.md) | Quản lý CSR bằng Kubernetes API — approve, deny, extract certificate, thay vì ký tay trực tiếp |
+| 6.10 [Kubeconfig](docs/security/10-kubeconfig.md) | File cấu hình truy cập cluster của kubectl — clusters, users, contexts, current-context, namespace |
+| 6.11 [API Groups](docs/security/11-apiGroup.md) | Cấu trúc Kubernetes API — core group, named groups, resources, verbs, và mối liên hệ với RBAC |
+| 6.12 [Authorization](docs/security/12-authorization.md) | Cơ chế phân quyền trong Kubernetes — AlwaysAllow, AlwaysDeny, ABAC, RBAC, Node Authorizer, Webhook |
+| 6.13 [RBAC](docs/security/13-rbac.md) | Đi sâu vào Role, RoleBinding, subjects, roleRef, rules và cách kiểm tra quyền bằng `kubectl auth can-i` |
+| 6.14 [ClusterRole & ClusterRoleBinding](docs/security/14-clusterRole.md) | Phân quyền ở mức cluster — cluster-scoped resources, all namespaces, và khác biệt với Role/RoleBinding |
+| 6.15 [ServiceAccount](docs/security/15-serviceaccount.md) | Danh tính cho ứng dụng trong cluster — token, projected volume, `serviceAccountName`, `kubectl create token` |
+| 6.16 [Image Pull Secret](docs/security/16-imageSecret.md) | Dùng private registry trong Kubernetes — `docker-registry` secret, `imagePullSecrets`, và lỗi `ErrImagePull` / `ImagePullBackOff` |
+| 6.17 [Docker Security Basics](docs/security/17-dockerSecurity.md) | Nền tảng container security — namespace, root vs non-root, Linux capabilities, `--cap-add`, `--cap-drop`, `--privileged` |
+| 6.18 [Security Context](docs/security/18-securityContext.md) | Cấu hình security ở Pod/container level — `runAsUser`, `runAsNonRoot`, capabilities, privileged, override rules |
+| 6.19 [NetworkPolicy](docs/security/19-networkPolicy.md) | Kiểm soát traffic giữa các Pod — ingress, egress, podSelector, policyTypes, và yêu cầu CNI support |
+| 6.20 [Developing Network Policies](docs/security/20-developingNetworkPolicies.md) | Đi sâu vào cách viết rule đúng — `podSelector` + `namespaceSelector`, `ipBlock`, logic AND/OR, ingress vs egress thực chiến |
 
 ---
 
@@ -172,8 +172,8 @@
 
 | Tài liệu | Nội dung chính |
 |-----------|----------------|
-| 7.1 [Certificate Management](tip/01-certificate.md) | Mẹo dùng `kubectl run --dry-run`, tạo YAML template nhanh cho kỳ thi |
-| 7.2 [Edit Pod & Deployment](tip/02-edit-pod-deployment.md) | Cách chỉnh sửa Pod & Deployment đang chạy — những field immutable cần biết |
+| 7.1 [Certificate Management](docs/tip/01-certificate.md) | Mẹo dùng `kubectl run --dry-run`, tạo YAML template nhanh cho kỳ thi |
+| 7.2 [Edit Pod & Deployment](docs/tip/02-edit-pod-deployment.md) | Cách chỉnh sửa Pod & Deployment đang chạy — những field immutable cần biết |
 
 ---
 

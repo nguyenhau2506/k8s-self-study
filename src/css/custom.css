@@ -1,0 +1,44 @@
+/**
+ * K8s Self-Study — theme overrides (Infima).
+ * Bảng màu chủ đạo lấy theo Kubernetes blue (#326CE5).
+ */
+
+:root {
+  --ifm-color-primary: #326ce5;
+  --ifm-color-primary-dark: #1f5fe0;
+  --ifm-color-primary-darker: #1d5ad3;
+  --ifm-color-primary-darkest: #184aae;
+  --ifm-color-primary-light: #4a7de9;
+  --ifm-color-primary-lighter: #5686eb;
+  --ifm-color-primary-lightest: #7ba1ef;
+  --ifm-code-font-size: 95%;
+  --ifm-font-family-base: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #6d9eeb;
+  --ifm-color-primary-dark: #4d86e6;
+  --ifm-color-primary-darker: #3d7be4;
+  --ifm-color-primary-darkest: #1a5fd9;
+  --ifm-color-primary-light: #8db6f0;
+  --ifm-color-primary-lighter: #9dc1f2;
+  --ifm-color-primary-lightest: #cddef8;
+  --ifm-background-color: #0e1116;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* Bảng gọn hơn cho các bảng so sánh dày đặc */
+.markdown table {
+  display: table;
+  width: 100%;
+}
+
+.markdown table th {
+  background-color: var(--ifm-color-emphasis-100);
+}
+
+/* Khối code ASCII diagram giữ nguyên khoảng trắng */
+.markdown pre code {
+  white-space: pre;
+}

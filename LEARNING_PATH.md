@@ -12,8 +12,8 @@ Mục tiêu:
 ## Giai đoạn 1 - Foundation
 
 ### 1. Introduction
-1. [Docker & containerd](introduction/01-Dockers-containerD.md)
-2. [Kubernetes Architecture](introduction/02-k8s-architecture.md)
+1. [Docker & containerd](docs/introduction/01-Dockers-containerD.md)
+2. [Kubernetes Architecture](docs/introduction/02-k8s-architecture.md)
 
 ### Mục tiêu cần nắm
 - Vì sao Kubernetes không còn phụ thuộc Docker runtime như trước
@@ -25,25 +25,25 @@ Mục tiêu:
 ## Giai đoạn 2 - Core Concepts
 
 ### 2.1 Control Plane
-1. [kube-apiserver](core-concept/master-node/01-kube-api.md)
-2. [etcd](core-concept/master-node/02-etcd.md)
-3. [kube-scheduler](core-concept/master-node/03-kube-scheduler.md)
-4. [kube-controller-manager](core-concept/master-node/04-kube-controller-manager.md)
+1. [kube-apiserver](docs/core-concept/master-node/01-kube-api.md)
+2. [etcd](docs/core-concept/master-node/02-etcd.md)
+3. [kube-scheduler](docs/core-concept/master-node/03-kube-scheduler.md)
+4. [kube-controller-manager](docs/core-concept/master-node/04-kube-controller-manager.md)
 
 ### 2.2 Workloads & Networking Basics
-5. [Pod](core-concept/worker-node/05-kube-pod.md)
-6. [ReplicaController & ReplicaSet](core-concept/master-node/06-replica-controller.md)
-7. [Deployment](core-concept/master-node/07-deployment.md)
-8. [Services](core-concept/master-node/08-services.md)
-9. [Ingress](core-concept/master-node/09-ingress.md)
-10. [Namespace](core-concept/master-node/10-namespace.md)
+5. [Pod](docs/core-concept/worker-node/05-kube-pod.md)
+6. [ReplicaController & ReplicaSet](docs/core-concept/master-node/06-replica-controller.md)
+7. [Deployment](docs/core-concept/master-node/07-deployment.md)
+8. [Services](docs/core-concept/master-node/08-services.md)
+9. [Ingress](docs/core-concept/master-node/09-ingress.md)
+10. [Namespace](docs/core-concept/master-node/10-namespace.md)
 
 ### 2.3 Worker Node
-11. [kubelet](core-concept/worker-node/11-kubelet.md)
-12. [kube-proxy](core-concept/worker-node/12-kube-proxy.md)
+11. [kubelet](docs/core-concept/worker-node/11-kubelet.md)
+12. [kube-proxy](docs/core-concept/worker-node/12-kube-proxy.md)
 
 ### 2.4 Storage Basics
-13. [Volumes](core-concept/storage/13-volumes.md)
+13. [Volumes](docs/core-concept/storage/13-volumes.md)
 
 ### Mục tiêu cần nắm
 - Hiểu luồng request đi qua API Server như thế nào
@@ -56,16 +56,16 @@ Mục tiêu:
 
 ## Giai đoạn 3 - Scheduling
 
-1. [Manual Scheduling](scheduling/01-manual-scheduling.md)
-2. [Labels & Selectors](scheduling/02-label-selector.md)
-3. [Taints & Tolerations](scheduling/03-taints-and-tolerations.md)
-4. [Affinity](scheduling/04-affinity.md)
-5. [Resource Requests & Limits](scheduling/05-resource-requests-and-limits.md)
-6. [DaemonSet](scheduling/06-daemonset.md)
-7. [Static Pod](scheduling/07-static-pod.md)
-8. [Priority Classes](scheduling/08-priority-classes.md)
-9. [Multiple Schedulers](scheduling/09-multiple-schedulers.md)
-10. [Admission Controller](scheduling/10-admission-controller.md)
+1. [Manual Scheduling](docs/scheduling/01-manual-scheduling.md)
+2. [Labels & Selectors](docs/scheduling/02-label-selector.md)
+3. [Taints & Tolerations](docs/scheduling/03-taints-and-tolerations.md)
+4. [Affinity](docs/scheduling/04-affinity.md)
+5. [Resource Requests & Limits](docs/scheduling/05-resource-requests-and-limits.md)
+6. [DaemonSet](docs/scheduling/06-daemonset.md)
+7. [Static Pod](docs/scheduling/07-static-pod.md)
+8. [Priority Classes](docs/scheduling/08-priority-classes.md)
+9. [Multiple Schedulers](docs/scheduling/09-multiple-schedulers.md)
+10. [Admission Controller](docs/scheduling/10-admission-controller.md)
 
 ### Mục tiêu cần nắm
 - Hiểu Pod được chọn Node như thế nào
@@ -78,12 +78,12 @@ Mục tiêu:
 
 ## Giai đoạn 4 - Application Lifecycle Management
 
-1. [Rolling Update & Rollback](application-manager/01-rolling-update-and-rollback.md)
-2. [Command & Args](application-manager/02-commands-and-args.md)
-3. [ConfigMap](application-manager/03-config-map.md)
-4. [Secret](application-manager/04-secret.md)
-5. [Multi-Container Pod](application-manager/05-multi-container-pod.md)
-6. [HPA & VPA](application-manager/06-hpa-and-vpa.md)
+1. [Rolling Update & Rollback](docs/application-manager/01-rolling-update-and-rollback.md)
+2. [Command & Args](docs/application-manager/02-commands-and-args.md)
+3. [ConfigMap](docs/application-manager/03-config-map.md)
+4. [Secret](docs/application-manager/04-secret.md)
+5. [Multi-Container Pod](docs/application-manager/05-multi-container-pod.md)
+6. [HPA & VPA](docs/application-manager/06-hpa-and-vpa.md)
 
 ### Mục tiêu cần nắm
 - Triển khai ứng dụng không downtime
@@ -95,10 +95,10 @@ Mục tiêu:
 
 ## Giai đoạn 5 - Cluster Maintenance
 
-1. [OS Upgrade](cluster%20maintenance/01-os-upgrade.md)
-2. [Version Skew Policy](cluster%20maintenance/02-k8s-release-policy.md)
-3. [Cluster Upgrade với kubeadm](cluster%20maintenance/03-demo-upgrade.md)
-4. [Backup & Restore](cluster%20maintenance/04-backup-restore.md)
+1. [OS Upgrade](docs/cluster-maintenance/01-os-upgrade.md)
+2. [Version Skew Policy](docs/cluster-maintenance/02-k8s-release-policy.md)
+3. [Cluster Upgrade với kubeadm](docs/cluster-maintenance/03-demo-upgrade.md)
+4. [Backup & Restore](docs/cluster-maintenance/04-backup-restore.md)
 
 ### Mục tiêu cần nắm
 - Biết drain / cordon / uncordon đúng lúc
@@ -110,26 +110,26 @@ Mục tiêu:
 
 ## Giai đoạn 6 - Security
 
-1. [Security Primitives](security/01-security-primitives.md)
-2. [TLS Basics](security/02-tls-basic.md)
-3. [Authentication](security/03-authentication.md)
-4. [Authorization & RBAC](security/04-authorization-rbac.md)
-5. [TLS & Certificates (PKI)](security/05-tls-certificates.md)
-6. [TLS trong Kubernetes](security/06-tls-k8s.md)
-7. [Tạo Certificates cho Kubernetes](security/07-tls-k8s-creation.md)
-8. [Xem chi tiết Certificates](security/08-tls-k8s-view-detail.md)
-9. [Certificates API](security/09-certificate-api.md)
-10. [Kubeconfig](security/10-kubeconfig.md)
-11. [API Groups](security/11-apiGroup.md)
-12. [Authorization](security/12-authorization.md)
-13. [RBAC](security/13-rbac.md)
-14. [ClusterRole & ClusterRoleBinding](security/14-clusterRole.md)
-15. [ServiceAccount](security/15-serviceaccount.md)
-16. [Image Pull Secret](security/16-imageSecret.md)
-17. [Docker Security Basics](security/17-dockerSecurity.md)
-18. [Security Context](security/18-securityContext.md)
-19. [NetworkPolicy](security/19-networkPolicy.md)
-20. [Developing Network Policies](security/20-developingNetworkPolicies.md)
+1. [Security Primitives](docs/security/01-security-primitives.md)
+2. [TLS Basics](docs/security/02-tls-basic.md)
+3. [Authentication](docs/security/03-authentication.md)
+4. [Authorization & RBAC](docs/security/04-authorization-rbac.md)
+5. [TLS & Certificates (PKI)](docs/security/05-tls-certificates.md)
+6. [TLS trong Kubernetes](docs/security/06-tls-k8s.md)
+7. [Tạo Certificates cho Kubernetes](docs/security/07-tls-k8s-creation.md)
+8. [Xem chi tiết Certificates](docs/security/08-tls-k8s-view-detail.md)
+9. [Certificates API](docs/security/09-certificate-api.md)
+10. [Kubeconfig](docs/security/10-kubeconfig.md)
+11. [API Groups](docs/security/11-apiGroup.md)
+12. [Authorization](docs/security/12-authorization.md)
+13. [RBAC](docs/security/13-rbac.md)
+14. [ClusterRole & ClusterRoleBinding](docs/security/14-clusterRole.md)
+15. [ServiceAccount](docs/security/15-serviceaccount.md)
+16. [Image Pull Secret](docs/security/16-imageSecret.md)
+17. [Docker Security Basics](docs/security/17-dockerSecurity.md)
+18. [Security Context](docs/security/18-securityContext.md)
+19. [NetworkPolicy](docs/security/19-networkPolicy.md)
+20. [Developing Network Policies](docs/security/20-developingNetworkPolicies.md)
 
 ### Mục tiêu cần nắm
 - Hiểu mô hình bảo mật nhiều lớp trong K8s
@@ -148,8 +148,8 @@ Mục tiêu:
 
 ## Giai đoạn 7 - Tips & Tricks
 
-1. [Certificate Management Tips](tip/01-certificate.md)
-2. [Edit Pod & Deployment](tip/02-edit-pod-deployment.md)
+1. [Certificate Management Tips](docs/tip/01-certificate.md)
+2. [Edit Pod & Deployment](docs/tip/02-edit-pod-deployment.md)
 
 ### Mục tiêu cần nắm
 - Tăng tốc thao tác trong exam hoặc lúc xử lý nhanh

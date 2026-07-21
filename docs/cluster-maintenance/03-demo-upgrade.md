@@ -8,7 +8,7 @@
 
 Kubernetes phát hành Minor version mới **~3 lần/năm** (~4 tháng/lần). Mỗi phiên bản chỉ được **hỗ trợ trong 3 Minor version gần nhất** — nghĩa là nếu bạn không nâng cấp, bạn sẽ mất bản vá bảo mật (security patch).
 
-Việc nâng cấp cũng liên quan trực tiếp đến [Version Skew Policy](k8s-release-policy.md) — thứ tự nâng cấp các thành phần phải đúng để không vi phạm chính sách tương thích phiên bản.
+Việc nâng cấp cũng liên quan trực tiếp đến [Version Skew Policy](02-k8s-release-policy.md) — thứ tự nâng cấp các thành phần phải đúng để không vi phạm chính sách tương thích phiên bản.
 
 ## 1.2 Nguyên tắc vàng trước khi bắt đầu
 

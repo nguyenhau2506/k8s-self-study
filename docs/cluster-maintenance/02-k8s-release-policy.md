@@ -10,7 +10,7 @@ Khi vận hành và nâng cấp cụm Kubernetes, bạn **không bắt buộc** 
 
 **Tại sao điều này quan trọng?**
 - Cho phép nâng cấp **tuần tự** (rolling upgrade) mà không gây downtime.
-- Kết hợp trực tiếp với quy trình `drain` → `cordon` → `uncordon` đã học ở [OS Upgrade](OSUpgrade.md).
+- Kết hợp trực tiếp với quy trình `drain` → `cordon` → `uncordon` đã học ở [OS Upgrade](01-os-upgrade.md).
 - Đảm bảo **tính tương thích** giữa các thành phần trong quá trình nâng cấp.
 
 ------------------------------------------------------------------------
@@ -312,7 +312,7 @@ kubeadm upgrade apply v1.29.0            # Áp dụng nâng cấp Control Plane
 - **kubelet không được phép mới hơn API Server** — nâng cấp Control Plane trước, Worker Node sau.
 - **kubectl linh hoạt nhất** nhưng nên giữ khớp phiên bản cluster.
 - **Kubernetes chỉ hỗ trợ 3 Minor version** — nâng cấp đều đặn để luôn trong phạm vi hỗ trợ.
-- Kết hợp với `drain` / `cordon` / `uncordon` (xem [OS Upgrade](OSUpgrade.md)) để nâng cấp Worker Node an toàn.
+- Kết hợp với `drain` / `cordon` / `uncordon` (xem [OS Upgrade](01-os-upgrade.md)) để nâng cấp Worker Node an toàn.
 
 ------------------------------------------------------------------------
 
