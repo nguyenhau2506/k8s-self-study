@@ -1,6 +1,6 @@
 # Vòng 01b — Introduction (Retake)
 
-**Phạm vi:** Tập trung 3 điểm yếu nhất từ [Vòng 01](vong-01-introduction.md):
+**Phạm vi:** Tập trung 3 điểm yếu nhất từ [Vòng 01](vong-01-introduction.mdx):
 1. Desired State + Reconciliation Loop
 2. Vai trò chi tiết 6 component
 3. Phân biệt Dockershim / containerd / runc

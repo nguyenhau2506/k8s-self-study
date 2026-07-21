@@ -3,8 +3,8 @@ const {themes: prismThemes} = require('prism-react-renderer');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'K8s Self-Study',
-  tagline: 'Học Kubernetes theo lộ trình CKA — tiếng Việt, có bài tập tự chấm',
+  title: 'Kubernaut',
+  tagline: 'Hành trình chinh phục Kubernetes — từ CKA đến CKS',
   favicon: 'img/favicon.svg',
 
   // For GitHub Pages the workflow sets BASE_URL=/k8s-self-study/.
@@ -54,7 +54,8 @@ const config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'K8s Self-Study',
+      title: 'Kubernaut',
+      logo: {alt: 'Kubernaut logo', src: 'img/logo.svg'},
       hideOnScroll: true,
       items: [
         {
@@ -98,7 +99,7 @@ const config = {
           ],
         },
       ],
-      copyright: `© ${new Date().getFullYear()} K8s Self-Study — nội dung học tập phi thương mại.`,
+      copyright: `© ${new Date().getFullYear()} Kubernaut — Học Kubernetes tiếng Việt. Nội dung phi thương mại.`,
     },
     prism: {
       theme: prismThemes.github,

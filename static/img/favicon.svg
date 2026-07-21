@@ -1,8 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <rect width="64" height="64" rx="12" fill="#326ce5"/>
-  <g fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round">
-    <polygon points="32,10 51,19 51,41 32,54 13,41 13,19"/>
-  </g>
-  <text x="32" y="39" font-family="system-ui, sans-serif" font-size="15" font-weight="700"
-        fill="#fff" text-anchor="middle">k8s</text>
+  <defs>
+    <linearGradient id="fg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#326CE5"/>
+      <stop offset="0.6" stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#A78BFA"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#0B0E14"/>
+  <path d="M32,12 L48,20 L51.5,37 L40.5,51 L23.5,51 L12.5,37 L16,20 Z"
+        fill="none" stroke="url(#fg)" stroke-width="3" stroke-linejoin="round"/>
+  <circle cx="32" cy="33" r="6" fill="url(#fg)"/>
+  <circle cx="49" cy="23" r="2.8" fill="#22D3EE"/>
 </svg>

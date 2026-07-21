@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Kubernaut">
+  <defs>
+    <linearGradient id="knGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#326CE5"/>
+      <stop offset="0.6" stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#A78BFA"/>
+    </linearGradient>
+  </defs>
+  <!-- heptagon (Kubernetes nod) -->
+  <path d="M32,8 L50.76,17.04 L55.4,37.34 L42.41,53.62 L21.59,53.62 L8.6,37.34 L13.24,17.04 Z"
+        fill="none" stroke="url(#knGrad)" stroke-width="3" stroke-linejoin="round"/>
+  <!-- orbit -->
+  <ellipse cx="32" cy="32" rx="25" ry="11" fill="none" stroke="#A78BFA" stroke-width="2"
+           opacity="0.85" transform="rotate(-24 32 32)"/>
+  <!-- core -->
+  <circle cx="32" cy="32" r="6.5" fill="url(#knGrad)"/>
+  <!-- the naut -->
+  <circle cx="53" cy="22" r="3.2" fill="#22D3EE"/>
+</svg>
