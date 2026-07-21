@@ -1,0 +1,10 @@
+# OS / editor junk
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# Upstream CKA course labs are referenced, not bundled:
+# https://github.com/kodekloudhub/certified-kubernetes-administrator-course
+certified-kubernetes-administrator-course-master/
