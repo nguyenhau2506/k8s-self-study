@@ -16,12 +16,20 @@ Site sẽ chạy tại: **https://nguyenhau2506.github.io/k8s-self-study/**
 
 > Workflow build với `BASE_URL=/k8s-self-study/` (site chạy dưới đường dẫn con của Pages). Local dev và Vercel dùng `/`.
 
-## Cách 2 — Vercel (nếu muốn domain riêng / preview theo PR)
+## Cách 2 — Vercel (auto-deploy qua GitHub, khuyến nghị nếu muốn domain đẹp / preview theo PR)
 
-1. Vào [vercel.com](https://vercel.com) → **Add New Project** → import repo `k8s-self-study`.
-2. Framework preset: **Docusaurus** (tự nhận). Build command `npm run build`, output `build`.
-3. Không cần đặt `BASE_URL` (mặc định `/`).
-4. Deploy. Vercel cấp domain `*.vercel.app`, có thể gắn custom domain sau.
+Repo đã có sẵn [`vercel.json`](vercel.json) (framework `docusaurus-2`, build `npm run build`, output `build`). Chỉ cần **import 1 lần**, sau đó **mỗi push lên `main` Vercel tự deploy** (và mỗi Pull Request có preview riêng) — đây chính là "auto-deploy qua GitHub", không cần token.
+
+1. Vào [vercel.com](https://vercel.com) → đăng nhập bằng GitHub → **Add New… → Project**.
+2. **Import** repo `nguyenhau2506/k8s-self-study`. Vercel tự nhận cấu hình từ `vercel.json` (không cần chỉnh gì).
+3. Bấm **Deploy**. Xong: mỗi lần push `main` → Vercel build & deploy tự động; mỗi PR có URL preview.
+4. `baseUrl` giữ `/` (mặc định) — **không** đặt `BASE_URL` trên Vercel.
+
+Vercel cấp domain `*.vercel.app`; có thể gắn custom domain trong **Settings → Domains**.
+
+> **Tùy chọn nâng cao:** có sẵn workflow thủ công [`.github/workflows/vercel.yml`](.github/workflows/vercel.yml) (deploy bằng Vercel CLI). Chỉ chạy khi bấm tay trong tab **Actions**, và cần thêm 3 secret repo: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`. Đa số trường hợp **không cần** cái này — dùng import ở trên là đủ.
+
+> Có thể deploy song song cả GitHub Pages **và** Vercel; hai bên độc lập, chọn URL nào làm chính tùy bạn.
 
 ## Chạy & build tại máy
 
