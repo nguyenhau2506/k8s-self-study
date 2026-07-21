@@ -1,22 +1,22 @@
-# Bài tập khôi phục trí nhớ
+# Bài tập & Luyện thi
 
-Thư mục lưu các vòng quiz/bài tập AI ra cho user trong quá trình ôn lại CKA sau khoảng gap không học.
+Khu vực luyện tập của **Kubernaut**: **quiz tự chấm** (trắc nghiệm, chấm ngay kèm giải thích) và **bài tập thực hành kiểu thi CKA/CKS** (tình huống → tự làm → xem lời giải tham khảo).
 
-Mỗi file là một **vòng quiz** đầy đủ:
-- Đề bài
-- Đáp án mẫu (giải thích bản chất, không chỉ ghi đáp số)
-- Đáp án user đã trả lời (snapshot)
-- Phần chấm + ghi chú điểm yếu để luyện lại
+## Danh sách bài tập
 
-## Mục lục các vòng
+| Bài | Nội dung | Dạng |
+|-----|----------|------|
+| [Vòng 01 — Introduction](vong-01-introduction.mdx) | Docker/containerd, kiến trúc K8s | 🎯 Quiz 8 câu |
+| [Vòng 01b — Introduction (ôn lại)](vong-01b-introduction-retake.md) | Desired State, 6 component, runc/containerd | 📝 Ôn nhanh |
+| [Bài tập Security (CKS)](security-cks.mdx) | NetworkPolicy · securityContext · RBAC | 🧪 3 thực hành + quiz 6 câu |
 
-| Vòng | Chủ đề | Trạng thái |
-|------|--------|-----------|
-| [Vòng 01](vong-01-introduction.mdx) | Introduction — Docker/containerd + K8s Architecture | 🎯 Quiz tương tác (8 câu) |
-| [Vòng 01b](vong-01b-introduction-retake.md) | Quiz lại 3 câu — Desired State, 6 component, runc/containerd | ✅ Đã làm (2026-05-20) |
+> Đang bổ sung dần bài tập thực hành cho tất cả các chặng: Core Concepts, Scheduling, App Lifecycle, Cluster Maintenance…
 
-## Quy ước
+## Cách dùng
 
-- Mỗi vòng đánh số `NN-kebab-case` giống convention chính của repo.
-- File quiz lại của cùng chủ đề thêm hậu tố `b`, `c`...
-- Đáp án mẫu **không** dán nguyên si từ note gốc — phải diễn lại bằng ngôn ngữ insight (so sánh, liên tưởng, bẫy thường gặp) để khi đọc lại còn nhớ được.
+- **Quiz:** chọn đáp án → bấm **Kiểm tra** → xem đúng/sai + giải thích, có điểm số và nút làm lại.
+- **Bài tập thực hành:** đọc tình huống, tự viết YAML/`kubectl`, rồi bấm **Xem lời giải** để đối chiếu.
+
+:::tip Luyện đúng kiểu thi
+CKA/CKS là thi **hands-on** — chấm bằng kết quả trên cluster, không phải trắc nghiệm. Hãy tự bấm giờ và gõ lời giải thật trước khi mở đáp án.
+:::

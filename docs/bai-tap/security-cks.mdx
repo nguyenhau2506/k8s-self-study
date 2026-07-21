@@ -1,0 +1,236 @@
+---
+id: security-cks
+title: Bài tập Security (CKS)
+sidebar_label: Bài tập Security (CKS)
+sidebar_position: 3
+---
+
+import Quiz from '@site/src/components/Quiz';
+import {PracticeTask, Solution} from '@site/src/components/Practice';
+
+# 🔐 Bài tập Security — kiểu thi CKS
+
+Các bài tập dưới đây mô phỏng **định dạng hands-on của kỳ thi CKS**: mỗi bài là một tình huống có ngữ cảnh + yêu cầu, bạn tự viết YAML/lệnh `kubectl` rồi bấm **Xem lời giải** để đối chiếu.
+
+:::tip Cách luyện đúng kiểu thi
+Tự bấm giờ, gõ lời giải bằng `kubectl`/YAML thật trong đầu (hoặc trên cluster luyện tập) **trước khi** mở đáp án. Kỳ thi CKS chấm bằng kết quả trên cluster, không phải trắc nghiệm.
+:::
+
+## Phần 1 — Bài tập thực hành
+
+<PracticeTask level="CKS" time="~8 phút" title="NetworkPolicy: default-deny ingress + chỉ cho phép frontend">
+
+**Bối cảnh:** Namespace `prod` chứa Pod `backend` (label `app=backend`) lắng nghe cổng `8080`. Namespace `frontend` (label `kubernetes.io/metadata.name=frontend`) cần gọi được `backend:8080`. Mọi nguồn khác phải bị chặn.
+
+**Nhiệm vụ:**
+1. Tạo policy **default-deny toàn bộ ingress** cho namespace `prod`.
+2. Tạo policy cho phép ingress tới Pod `app=backend` cổng `8080` **chỉ** từ namespace `frontend`.
+
+<Solution>
+
+```yaml
+# 1) default-deny mọi ingress trong namespace prod
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: prod
+spec:
+  podSelector: {}          # áp cho MỌI pod trong prod
+  policyTypes:
+    - Ingress              # không có rule ingress => chặn hết
+---
+# 2) chỉ cho phép từ namespace frontend tới backend:8080
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-to-backend
+  namespace: prod
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: frontend
+      ports:
+        - protocol: TCP
+          port: 8080
+```
+
+**Giải thích:** `podSelector: {}` + `policyTypes: [Ingress]` mà không có `ingress:` = chặn toàn bộ ingress. NetworkPolicy có tính **cộng dồn (additive)** nên policy thứ hai mở đúng một lối vào cho `frontend`.
+
+**Bẫy hay gặp:** NetworkPolicy chỉ có tác dụng nếu CNI hỗ trợ (Calico, Cilium…). `namespaceSelector` khớp theo **label của namespace**, không phải tên — nhớ label `kubernetes.io/metadata.name` được K8s tự gắn từ v1.21.
+
+</Solution>
+
+</PracticeTask>
+
+<PracticeTask level="CKS" time="~6 phút" title="Hardening securityContext cho Pod">
+
+**Bối cảnh:** Pod `web` đang chạy bằng `root`, cho phép privilege escalation và ghi được vào rootfs — vi phạm baseline bảo mật.
+
+**Nhiệm vụ:** Cấu hình lại để container chạy **non-root (uid 1000)**, **không** escalate privilege, **drop toàn bộ** Linux capabilities, và **rootfs chỉ đọc**.
+
+<Solution>
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web
+spec:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+    - name: web
+      image: nginx:1.27
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop: ["ALL"]
+      volumeMounts:                 # nginx cần ghi tạm => cấp emptyDir
+        - name: tmp
+          mountPath: /tmp
+  volumes:
+    - name: tmp
+      emptyDir: {}
+```
+
+**Giải thích:** `runAsNonRoot` + `runAsUser` ép uid non-root; `allowPrivilegeEscalation: false` chặn setuid leo thang; `drop: ["ALL"]` bỏ mọi capability; `readOnlyRootFilesystem: true` khoá rootfs. `seccompProfile: RuntimeDefault` là yêu cầu của Pod Security *restricted*.
+
+**Bẫy hay gặp:** app cần ghi (nginx pid/tmp) sẽ crash khi rootfs read-only → mount `emptyDir` vào đúng thư mục. `capabilities` đặt ở **container-level**, không phải pod-level.
+
+</Solution>
+
+</PracticeTask>
+
+<PracticeTask level="CKS" time="~6 phút" title="RBAC least-privilege cho ServiceAccount CI">
+
+**Bối cảnh:** Pipeline CI dùng ServiceAccount `ci` trong namespace `dev`. Nó chỉ được **xem** (get/list/watch) Pod trong `dev` — không hơn.
+
+**Nhiệm vụ:** Tạo `ServiceAccount`, `Role`, `RoleBinding` đúng nguyên tắc least-privilege và kiểm chứng bằng `kubectl auth can-i`.
+
+<Solution>
+
+```bash
+kubectl -n dev create serviceaccount ci
+
+kubectl -n dev create role pod-reader \
+  --verb=get,list,watch --resource=pods
+
+kubectl -n dev create rolebinding ci-pod-reader \
+  --role=pod-reader --serviceaccount=dev:ci
+
+# Kiểm chứng:
+kubectl -n dev auth can-i list pods \
+  --as=system:serviceaccount:dev:ci        # => yes
+kubectl -n dev auth can-i delete pods \
+  --as=system:serviceaccount:dev:ci        # => no
+```
+
+**Giải thích:** Dùng `Role` + `RoleBinding` (namespaced) thay vì `ClusterRole` để giới hạn phạm vi đúng namespace `dev`. `auth can-i --as=system:serviceaccount:<ns>:<sa>` là cách kiểm tra quyền của SA nhanh nhất trong phòng thi.
+
+**Bẫy hay gặp:** Đừng dùng `ClusterRoleBinding` (cấp toàn cluster). Format subject của SA luôn là `system:serviceaccount:<namespace>:<name>`.
+
+</Solution>
+
+</PracticeTask>
+
+## Phần 2 — Trắc nghiệm nhanh
+
+<Quiz
+  title="Security — 6 câu"
+  questions={[
+    {
+      id: 's1',
+      question: 'Một namespace KHÔNG có NetworkPolicy nào thì traffic tới các Pod trong đó ra sao?',
+      options: [
+        {id: 'a', text: 'Bị chặn toàn bộ (default-deny)'},
+        {id: 'b', text: 'Cho phép tất cả — Pod ở trạng thái non-isolated'},
+        {id: 'c', text: 'Chỉ cho phép traffic trong cùng namespace'},
+        {id: 'd', text: 'Phụ thuộc vào RBAC'},
+      ],
+      correct: ['b'],
+      explanation:
+        'Mặc định K8s cho phép mọi traffic. Pod chỉ trở nên "isolated" khi có ít nhất một NetworkPolicy chọn nó; khi đó chỉ traffic khớp rule mới được vào/ra.',
+    },
+    {
+      id: 's2',
+      question: 'Cấu hình nào tạo default-deny toàn bộ ingress cho một namespace?',
+      options: [
+        {id: 'a', text: 'podSelector: {} và policyTypes: [Ingress], không có ingress rule'},
+        {id: 'b', text: 'podSelector khớp 1 app cụ thể + ingress: []'},
+        {id: 'c', text: 'Đặt annotation deny-all lên namespace'},
+        {id: 'd', text: 'ClusterRole deny ingress'},
+      ],
+      correct: ['a'],
+      explanation:
+        'podSelector: {} áp cho mọi Pod; policyTypes: [Ingress] mà thiếu ingress rule nghĩa là không nguồn nào được phép → chặn hết.',
+    },
+    {
+      id: 's3',
+      question: 'Field securityContext nào khoá không cho container ghi vào root filesystem?',
+      options: [
+        {id: 'a', text: 'privileged: false'},
+        {id: 'b', text: 'runAsNonRoot: true'},
+        {id: 'c', text: 'readOnlyRootFilesystem: true'},
+        {id: 'd', text: 'allowPrivilegeEscalation: false'},
+      ],
+      correct: ['c'],
+      explanation:
+        'readOnlyRootFilesystem: true mount rootfs read-only. App cần ghi thì cấp emptyDir vào thư mục cụ thể (vd /tmp).',
+    },
+    {
+      id: 's4',
+      question: 'Muốn drop mọi capability rồi chỉ thêm lại NET_BIND_SERVICE, cấu hình đúng là?',
+      options: [
+        {id: 'a', text: 'capabilities: { add: ["ALL"], drop: ["NET_BIND_SERVICE"] }'},
+        {id: 'b', text: 'capabilities: { drop: ["ALL"], add: ["NET_BIND_SERVICE"] }'},
+        {id: 'c', text: 'privileged: true'},
+        {id: 'd', text: 'capabilities: ["NET_BIND_SERVICE"]'},
+      ],
+      correct: ['b'],
+      explanation:
+        'Best practice: drop ["ALL"] rồi add đúng cap cần thiết. Đặt trong securityContext ở container-level.',
+    },
+    {
+      id: 's5',
+      question: 'Cấp quyền xem Pod trong DUY NHẤT namespace dev cho một user nên dùng?',
+      options: [
+        {id: 'a', text: 'ClusterRole + ClusterRoleBinding'},
+        {id: 'b', text: 'Role + RoleBinding trong namespace dev'},
+        {id: 'c', text: 'ClusterRole + RoleBinding trong dev'},
+        {id: 'd', text: 'Chỉ cần RoleBinding'},
+      ],
+      correct: ['b'],
+      explanation:
+        'Least-privilege theo namespace → Role (namespaced) + RoleBinding. ClusterRole+ClusterRoleBinding sẽ cấp toàn cluster (quá rộng).',
+    },
+    {
+      id: 's6',
+      question: 'Pod Security Admission enforce mức "restricted" cho một namespace bằng cách nào?',
+      options: [
+        {id: 'a', text: 'Tạo PodSecurityPolicy restricted'},
+        {id: 'b', text: 'Gắn label pod-security.kubernetes.io/enforce=restricted lên namespace'},
+        {id: 'c', text: 'Annotation seccomp lên từng Pod'},
+        {id: 'd', text: 'Bật flag --restricted trên kubelet'},
+      ],
+      correct: ['b'],
+      explanation:
+        'PSP đã bị gỡ từ v1.25. Pod Security Admission dùng label namespace: pod-security.kubernetes.io/enforce=restricted (kèm audit/warn tuỳ chọn).',
+    },
+  ]}
+/>
+
+:::note Nguồn ôn lại
+Xem lại lý thuyết ở chặng [Security](../security/security-primitives.md): RBAC, NetworkPolicy, Security Context, Pod Security.
+:::
