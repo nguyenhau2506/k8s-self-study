@@ -1,4 +1,6 @@
 // @ts-check
+// Load local env (Supabase). .env.local is gitignored; no-op if the file is absent.
+require('dotenv').config({path: '.env.local'});
 const {themes: prismThemes} = require('prism-react-renderer');
 
 /** @type {import('@docusaurus/types').Config} */
@@ -14,6 +16,13 @@ const config = {
   organizationName: 'nguyenhau2506',
   projectName: 'k8s-self-study',
   trailingSlash: false,
+
+  // Supabase config surfaced to the client (publishable/anon key is RLS-protected).
+  // Null when env is absent → the app runs fine with auth features disabled.
+  customFields: {
+    supabaseUrl: process.env.SUPABASE_URL || null,
+    supabaseAnonKey: process.env.SUPABASE_ANON_KEY || null,
+  },
 
   onBrokenLinks: 'warn',
 
