@@ -1,0 +1,106 @@
+---
+id: vong-01b-introduction-retake
+title: Vòng 01b — Introduction (ôn lại)
+sidebar_label: Vòng 01b — Introduction (ôn lại)
+sidebar_position: 2
+---
+
+import Quiz from '@site/src/components/Quiz';
+
+# 🔁 Vòng 01b — Introduction (ôn lại)
+
+Ôn lại 3 điểm dễ sai nhất của chặng Introduction (nối tiếp [Vòng 01](vong-01-introduction.mdx)): **reconciliation loop khi node chết**, **Scheduler vs Kubelet**, và **hiểu nhầm về Dockershim**.
+
+<Quiz
+  title="Introduction (ôn lại) — 6 câu"
+  questions={[
+    {
+      id: 'b1',
+      question: 'Deployment replicas=5; một worker node chết làm mất 2 Pod. Actual State và Desired State lúc này là?',
+      options: [
+        {id: 'a', text: 'Actual = 5, Desired = 5'},
+        {id: 'b', text: 'Actual = 3, Desired = 5'},
+        {id: 'c', text: 'Actual = 3, Desired = 3'},
+        {id: 'd', text: 'Actual = 2, Desired = 5'},
+      ],
+      correct: ['b'],
+      explanation:
+        'Desired (khai báo) vẫn = 5; Actual (thực tế còn chạy) = 3. Chênh lệch này chính là thứ controller sẽ "kéo" về.',
+    },
+    {
+      id: 'b2',
+      question: 'Khi node chết, hai controller nào phối hợp để khôi phục Pod?',
+      options: [
+        {id: 'a', text: 'Node Controller phát hiện NotReady + evict; ReplicaSet Controller tạo Pod mới'},
+        {id: 'b', text: 'kube-scheduler phát hiện; kubelet tạo Pod'},
+        {id: 'c', text: 'etcd phát hiện; API Server tạo Pod'},
+        {id: 'd', text: 'kube-proxy phát hiện; Deployment tạo Pod'},
+      ],
+      correct: ['a'],
+      explanation:
+        'Node Controller theo dõi heartbeat → đánh dấu node NotReady, sau pod-eviction-timeout đánh dấu Pod Terminating. ReplicaSet Controller thấy Actual<Desired → tạo Pod mới. Scheduler rồi kubelet lo phần còn lại.',
+    },
+    {
+      id: 'b3',
+      question: 'Các Pod đã mất có được "hồi sinh" nguyên trạng trên node mới không?',
+      options: [
+        {id: 'a', text: 'Có, cùng UID và IP cũ'},
+        {id: 'b', text: 'Không — Pod là immutable; Pod mới hoàn toàn được tạo (UID/IP mới)'},
+        {id: 'c', text: 'Có, nhưng đổi tên'},
+        {id: 'd', text: 'Chỉ hồi sinh nếu dùng StatefulSet'},
+      ],
+      correct: ['b'],
+      explanation:
+        'Pod immutable — không sống lại. Pod mới có UID/IP riêng → đừng phụ thuộc tên/IP Pod; dùng Service làm endpoint ổn định.',
+    },
+    {
+      id: 'b4',
+      question: '"kube-scheduler chọn Node xong là tự chạy Pod trên Node đó." Nhận định này?',
+      options: [
+        {id: 'a', text: 'Đúng — scheduler vừa chọn vừa tạo container'},
+        {id: 'b', text: 'Sai — scheduler chỉ PATCH nodeName vào etcd (qua API Server); kubelet mới gọi containerd tạo container'},
+        {id: 'c', text: 'Sai — kubelet chọn Node, scheduler tạo container'},
+        {id: 'd', text: 'Đúng với Pod tĩnh'},
+      ],
+      correct: ['b'],
+      explanation:
+        'Scheduler chỉ ra quyết định (ghi spec.nodeName qua API Server → etcd). Kubelet ở node đó watch thấy Pod của mình rồi gọi containerd → runc tạo container.',
+    },
+    {
+      id: 'b5',
+      question: 'Các thành phần control plane / node giao tiếp với nhau theo mô hình nào?',
+      options: [
+        {id: 'a', text: 'Mesh — mỗi component nói trực tiếp với mọi component khác'},
+        {id: 'b', text: 'Hub-and-spoke — mọi component chỉ nói chuyện qua kube-apiserver'},
+        {id: 'c', text: 'Peer-to-peer qua etcd'},
+        {id: 'd', text: 'Thông qua kube-proxy'},
+      ],
+      correct: ['b'],
+      explanation:
+        'Mọi thành phần (scheduler, controller-manager, kubelet, kube-proxy) chỉ giao tiếp qua API Server (hub-and-spoke). Đây là lý do K8s tách rời và scale tốt.',
+    },
+    {
+      id: 'b6',
+      question: 'Cluster K8s v1.30 tạo Pod chậm. Nhận định & hướng debug đúng?',
+      options: [
+        {id: 'a', text: 'Do Dockershim nghẽn — nâng cấp Dockershim'},
+        {id: 'b', text: 'v1.30 KHÔNG còn Dockershim (removed từ v1.24); debug theo thứ tự image pull → scheduler → CNI → etcd → admission webhook'},
+        {id: 'c', text: 'Luôn do runtime containerd chậm'},
+        {id: 'd', text: 'Do thiếu kube-proxy'},
+      ],
+      correct: ['b'],
+      explanation:
+        'Dockershim đã bị gỡ hoàn toàn ở v1.24 nên không thể là nguyên nhân ở v1.30. 80% Pod chậm là do image pull hoặc CNI — debug bằng kubectl describe pod và crictl.',
+    },
+  ]}
+/>
+
+## 🧠 Câu thần chú cần nhớ
+
+> - **Node chết** → **Node Controller** đánh dấu Pod tử trận → **ReplicaSet Controller** đẻ Pod mới → **Scheduler** chọn node → **kubelet+containerd** chạy. Pod cũ **không** sống lại.
+> - **Scheduler quyết Node, ghi etcd** · **Kubelet đọc qua API Server, gọi containerd**. Tất cả đi qua **API Server** (hub-and-spoke).
+> - Pod chậm tạo → **đừng đổ lỗi Dockershim** (đã chết từ v1.24). Debug: **image pull → scheduler → CNI → etcd → admission webhook**.
+
+:::note Nguồn ôn lại
+[Docker & containerd](../introduction/Dockers-containerD.md) · [Kubernetes Architecture](../introduction/k8s-architecture.md)
+:::

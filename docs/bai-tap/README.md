@@ -7,7 +7,7 @@ Khu vực luyện tập của **Kubernaut**: **quiz tự chấm** (trắc nghi�
 | Bài | Nội dung | Dạng |
 |-----|----------|------|
 | [Vòng 01 — Introduction](vong-01-introduction.mdx) | Docker/containerd, kiến trúc K8s | 🎯 Quiz 8 câu |
-| [Vòng 01b — Introduction (ôn lại)](vong-01b-introduction-retake.md) | Desired State, 6 component, runc/containerd | 📝 Ôn nhanh |
+| [Vòng 01b — Introduction (ôn lại)](vong-01b-introduction-retake.mdx) | Desired State · 6 component · Scheduler vs Kubelet | 🎯 Quiz 6 câu |
 | [Bài tập Core Concepts (CKA)](core-concepts.mdx) | Pod · Service · Deployment · PV/PVC | 🧪 3 thực hành + quiz 6 câu |
 | [Bài tập Scheduling (CKA)](scheduling.mdx) | Taints · Affinity · Resources/QoS | 🧪 3 thực hành + quiz 6 câu |
 | [Bài tập App Lifecycle (CKA)](app-lifecycle.mdx) | Rolling update · ConfigMap/Secret · HPA | 🧪 3 thực hành + quiz 6 câu |
