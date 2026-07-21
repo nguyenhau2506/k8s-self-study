@@ -1,0 +1,217 @@
+---
+id: core-concepts
+title: Bài tập Core Concepts (CKA)
+sidebar_label: Bài tập Core Concepts (CKA)
+sidebar_position: 4
+---
+
+import Quiz from '@site/src/components/Quiz';
+import {PracticeTask, Solution} from '@site/src/components/Practice';
+
+# 🧱 Bài tập Core Concepts — kiểu thi CKA
+
+Luyện các thao tác nền tảng thường gặp trong kỳ thi **CKA**: tạo/expose workload bằng `kubectl` imperative, Service, và Storage. Tự làm trước, rồi mở lời giải đối chiếu.
+
+## Phần 1 — Bài tập thực hành
+
+<PracticeTask level="CKA" time="~5 phút" title="Tạo Pod và expose bằng ClusterIP Service">
+
+**Bối cảnh:** Cần một Pod `web` chạy `nginx` và một Service nội bộ để các Pod khác gọi tới.
+
+**Nhiệm vụ:**
+1. Tạo Pod `web` image `nginx:1.27`, label `app=web`.
+2. Tạo Service ClusterIP `web-svc` trỏ tới `app=web`, port `80` → targetPort `80`.
+3. Kiểm chứng từ một Pod tạm.
+
+<Solution>
+
+```bash
+# Cách nhanh nhất (imperative):
+kubectl run web --image=nginx:1.27 --labels=app=web --port=80
+kubectl expose pod web --name=web-svc --port=80 --target-port=80
+
+# Kiểm chứng:
+kubectl run tmp --image=busybox:1.36 --rm -it --restart=Never -- \
+  wget -qO- http://web-svc:80
+```
+
+**Giải thích:** `kubectl expose` sinh Service với `selector` khớp label của đối tượng nguồn. ClusterIP là type mặc định — chỉ truy cập được **trong** cluster qua DNS `web-svc.<namespace>.svc.cluster.local`.
+
+**Bẫy hay gặp:** `--target-port` phải khớp cổng container thật (80 của nginx). Trong phòng thi, ưu tiên imperative để tiết kiệm thời gian thay vì viết YAML tay.
+
+</Solution>
+
+</PracticeTask>
+
+<PracticeTask level="CKA" time="~6 phút" title="Deployment + NodePort + scale">
+
+**Bối cảnh:** Triển khai ứng dụng `api` có 3 bản sao, cho truy cập từ ngoài node, sau đó scale lên 5.
+
+**Nhiệm vụ:**
+1. Tạo Deployment `api` image `nginx:1.27`, `replicas=3`.
+2. Expose bằng Service **NodePort**, port `80`.
+3. Scale Deployment lên `5` và xác nhận.
+
+<Solution>
+
+```bash
+kubectl create deployment api --image=nginx:1.27 --replicas=3
+kubectl expose deployment api --type=NodePort --port=80
+
+kubectl scale deployment api --replicas=5
+kubectl get deploy api            # READY 5/5
+kubectl get svc api -o wide       # xem cổng NodePort (3xxxx)
+```
+
+**Giải thích:** NodePort mở một cổng (mặc định dải `30000–32767`) trên **mọi** node, chuyển tiếp vào Service → Pod. `kubectl scale` cập nhật `spec.replicas`; ReplicaSet do Deployment quản lý sẽ tạo thêm Pod.
+
+**Bẫy hay gặp:** NodePort tự cấp cổng ngẫu nhiên nếu không chỉ định `--node-port` (chỉ đặt được qua YAML/patch). Deployment tạo Pod gián tiếp qua ReplicaSet — đừng sửa Pod trực tiếp.
+
+</Solution>
+
+</PracticeTask>
+
+<PracticeTask level="CKA" time="~7 phút" title="PersistentVolume + PVC + Pod mount">
+
+**Bối cảnh:** Một Pod cần lưu dữ liệu bền vào `/data` bằng PVC `data-pvc` (1Gi, RWO).
+
+**Nhiệm vụ:** Tạo PV (hostPath, 1Gi), PVC khớp, và Pod mount PVC vào `/data`.
+
+<Solution>
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: data-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes: ["ReadWriteOnce"]
+  hostPath:
+    path: /mnt/data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: data-pvc
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app
+spec:
+  containers:
+    - name: app
+      image: nginx:1.27
+      volumeMounts:
+        - name: data
+          mountPath: /data
+  volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: data-pvc
+```
+
+**Giải thích:** PVC bind với PV khi `accessModes` + `storage` (và `storageClassName` nếu có) tương thích. Kiểm tra `kubectl get pvc` → STATUS `Bound`.
+
+**Bẫy hay gặp:** PVC `Pending` = không có PV/StorageClass phù hợp. `hostPath` chỉ dùng cho lab một node — production dùng StorageClass động.
+
+</Solution>
+
+</PracticeTask>
+
+## Phần 2 — Trắc nghiệm nhanh
+
+<Quiz
+  title="Core Concepts — 6 câu"
+  questions={[
+    {
+      id: 'c1',
+      question: 'Thành phần nào là cửa ngõ DUY NHẤT mà mọi request (kubectl, controller, kubelet) đi qua?',
+      options: [
+        {id: 'a', text: 'etcd'},
+        {id: 'b', text: 'kube-apiserver'},
+        {id: 'c', text: 'kube-scheduler'},
+        {id: 'd', text: 'kube-proxy'},
+      ],
+      correct: ['b'],
+      explanation:
+        'kube-apiserver là front-end của control plane: xác thực, ủy quyền, admission, rồi đọc/ghi etcd. Mọi thành phần khác giao tiếp qua nó.',
+    },
+    {
+      id: 'c2',
+      question: 'Service type nào mở một cổng trên MỌI node để truy cập từ ngoài cluster?',
+      options: [
+        {id: 'a', text: 'ClusterIP'},
+        {id: 'b', text: 'NodePort'},
+        {id: 'c', text: 'ExternalName'},
+        {id: 'd', text: 'Headless'},
+      ],
+      correct: ['b'],
+      explanation:
+        'NodePort mở cổng dải 30000–32767 trên mọi node. ClusterIP chỉ nội bộ; LoadBalancer bổ sung LB ngoài; ExternalName map sang DNS.',
+    },
+    {
+      id: 'c3',
+      question: 'Khác biệt cốt lõi giữa ReplicaSet và Deployment?',
+      options: [
+        {id: 'a', text: 'Không khác gì, chỉ khác tên'},
+        {id: 'b', text: 'Deployment quản lý ReplicaSet và thêm rolling update + rollback'},
+        {id: 'c', text: 'ReplicaSet hỗ trợ rollback còn Deployment thì không'},
+        {id: 'd', text: 'Deployment chỉ chạy 1 Pod'},
+      ],
+      correct: ['b'],
+      explanation:
+        'Deployment là lớp trên: mỗi lần đổi template nó tạo ReplicaSet mới và chuyển Pod dần (rolling update), giữ lịch sử để rollback.',
+    },
+    {
+      id: 'c4',
+      question: 'kube-proxy làm việc chủ yếu ở tầng nào?',
+      options: [
+        {id: 'a', text: 'L7 (HTTP routing)'},
+        {id: 'b', text: 'L4 — duy trì iptables/IPVS cho Service'},
+        {id: 'c', text: 'L2 (ARP)'},
+        {id: 'd', text: 'Không liên quan tới mạng'},
+      ],
+      correct: ['b'],
+      explanation:
+        'kube-proxy lập trình iptables/IPVS để chuyển traffic tới Service ở tầng L4. Routing HTTP (L7) là việc của Ingress Controller.',
+    },
+    {
+      id: 'c5',
+      question: 'Resource nào sau đây KHÔNG bị giới hạn theo namespace (cluster-scoped)?',
+      options: [
+        {id: 'a', text: 'Pod'},
+        {id: 'b', text: 'Service'},
+        {id: 'c', text: 'Node'},
+        {id: 'd', text: 'ConfigMap'},
+      ],
+      correct: ['c'],
+      explanation:
+        'Node (và PersistentVolume, Namespace, ClusterRole…) là cluster-scoped. Pod/Service/ConfigMap là namespaced.',
+    },
+    {
+      id: 'c6',
+      question: 'PVC ở trạng thái Pending mãi không Bound — nguyên nhân phổ biến nhất?',
+      options: [
+        {id: 'a', text: 'Pod chưa được tạo'},
+        {id: 'b', text: 'Không có PV/StorageClass phù hợp accessModes + dung lượng'},
+        {id: 'c', text: 'Thiếu Service'},
+        {id: 'd', text: 'RBAC chặn'},
+      ],
+      correct: ['b'],
+      explanation:
+        'PVC chỉ Bound khi có PV tương thích (hoặc StorageClass động cấp PV). Sai accessModes/storage/storageClassName → Pending.',
+    },
+  ]}
+/>
+
+:::note Nguồn ôn lại
+Xem lại [Core Concepts](../core-concept/master-node/kube-api.md): API Server, Service, ReplicaSet/Deployment, và [Volumes](../core-concept/storage/volumes.md).
+:::
