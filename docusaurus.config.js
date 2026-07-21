@@ -58,6 +58,18 @@ const config = {
   ],
 
   themeConfig: /** @type {import('@docusaurus/preset-classic').ThemeConfig} */ ({
+    image: 'img/social-card.svg',
+    metadata: [
+      {
+        name: 'keywords',
+        content: 'kubernetes, k8s, CKA, CKS, học kubernetes, tiếng việt, devops, kubernaut',
+      },
+      {
+        name: 'description',
+        content:
+          'Kubernaut — học Kubernetes theo lộ trình CKA đến CKS bằng tiếng Việt: lý thuyết bài bản, ví dụ YAML, quiz và bài tập hands-on.',
+      },
+    ],
     colorMode: {
       defaultMode: 'dark',
       respectPrefersColorScheme: true,

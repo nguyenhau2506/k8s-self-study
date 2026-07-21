@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="Kubernaut">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b0e14"/>
+      <stop offset="1" stop-color="#0d111a"/>
+    </linearGradient>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#326CE5"/>
+      <stop offset="0.6" stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#A78BFA"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#22D3EE" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#22D3EE" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="960" cy="150" r="320" fill="url(#glow)"/>
+
+  <!-- logo mark -->
+  <g transform="translate(120,235) scale(2.5)">
+    <path d="M32,8 L50.76,17.04 L55.4,37.34 L42.41,53.62 L21.59,53.62 L8.6,37.34 L13.24,17.04 Z"
+          fill="none" stroke="url(#brand)" stroke-width="3" stroke-linejoin="round"/>
+    <ellipse cx="32" cy="32" rx="25" ry="11" fill="none" stroke="#A78BFA" stroke-width="2"
+             opacity="0.85" transform="rotate(-24 32 32)"/>
+    <circle cx="32" cy="32" r="6.5" fill="url(#brand)"/>
+    <circle cx="53" cy="22" r="3.2" fill="#22D3EE"/>
+  </g>
+
+  <!-- wordmark + tagline -->
+  <text x="290" y="300" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+        font-size="96" font-weight="800" fill="#ffffff" letter-spacing="-2">Kubernaut</text>
+  <text x="292" y="360" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+        font-size="34" font-weight="500" fill="#aeb8c7">Hành trình chinh phục Kubernetes — từ CKA đến CKS</text>
+
+  <!-- chips -->
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="24" fill="#22D3EE">
+    <text x="292" y="440">☸ tiếng Việt</text>
+    <text x="470" y="440" fill="#A78BFA">• 7 chặng lộ trình</text>
+    <text x="720" y="440" fill="#7aa7f0">• quiz + bài tập hands-on</text>
+  </g>
+
+  <rect x="0" y="620" width="1200" height="10" fill="url(#brand)"/>
+</svg>
