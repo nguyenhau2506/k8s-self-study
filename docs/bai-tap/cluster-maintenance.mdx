@@ -1,0 +1,210 @@
+---
+id: cluster-maintenance
+title: Bài tập Cluster Maintenance (CKA)
+sidebar_label: Bài tập Cluster Maintenance (CKA)
+sidebar_position: 7
+---
+
+import Quiz from '@site/src/components/Quiz';
+import {PracticeTask, Solution} from '@site/src/components/Practice';
+
+# 🔧 Bài tập Cluster Maintenance — kiểu thi CKA
+
+Ba kỹ năng vận hành hay ra thi CKA và dễ mất điểm nhất: **drain node**, **nâng cấp kubeadm**, và **backup/restore etcd**.
+
+## Phần 1 — Bài tập thực hành
+
+<PracticeTask level="CKA" time="~5 phút" title="Drain node để bảo trì rồi đưa lại vào cluster">
+
+**Bối cảnh:** Cần bảo trì `node01`. Phải chuyển hết Pod đi an toàn, kể cả khi có DaemonSet và Pod dùng emptyDir.
+
+**Nhiệm vụ:** Drain `node01` an toàn, sau khi bảo trì xong thì cho nhận Pod trở lại.
+
+<Solution>
+
+```bash
+# Đánh dấu unschedulable + evict Pod (bỏ qua DaemonSet, xoá dữ liệu emptyDir)
+kubectl drain node01 --ignore-daemonsets --delete-emptydir-data
+
+# ... bảo trì OS/kernel ...
+
+# Cho node nhận Pod trở lại
+kubectl uncordon node01
+```
+
+**Giải thích:** `drain` = `cordon` (đánh dấu unschedulable) + evict Pod. `--ignore-daemonsets` là **bắt buộc** vì DaemonSet Pod không drain được (controller sẽ tạo lại). `--delete-emptydir-data` cần khi có Pod dùng emptyDir (dữ liệu sẽ mất).
+
+**Bẫy hay gặp:** Thiếu `--ignore-daemonsets` → lệnh drain báo lỗi và dừng. Pod "trần" (không thuộc controller) cần `--force`. Nhớ `uncordon` sau khi xong nếu không node sẽ mãi không nhận Pod.
+
+</Solution>
+
+</PracticeTask>
+
+<PracticeTask level="CKA" time="~9 phút" title="Nâng cấp cluster bằng kubeadm (đúng thứ tự)">
+
+**Bối cảnh:** Nâng control-plane node lên `v1.31.1` trước, rồi tới worker.
+
+**Nhiệm vụ:** Nêu đúng trình tự lệnh nâng cấp control-plane và worker.
+
+<Solution>
+
+```bash
+# ===== CONTROL PLANE =====
+# 1) Nâng kubeadm
+apt-get update && apt-get install -y kubeadm=1.31.1-*
+kubeadm version
+
+# 2) Xem kế hoạch & áp dụng
+kubeadm upgrade plan
+kubeadm upgrade apply v1.31.1
+
+# 3) Drain control-plane, nâng kubelet+kubectl, restart
+kubectl drain <cp-node> --ignore-daemonsets
+apt-get install -y kubelet=1.31.1-* kubectl=1.31.1-*
+systemctl daemon-reload && systemctl restart kubelet
+kubectl uncordon <cp-node>
+
+# ===== WORKER (làm lần lượt từng node) =====
+kubectl drain <worker> --ignore-daemonsets --delete-emptydir-data
+# trên worker:
+apt-get install -y kubeadm=1.31.1-*
+kubeadm upgrade node
+apt-get install -y kubelet=1.31.1-* kubectl=1.31.1-*
+systemctl daemon-reload && systemctl restart kubelet
+# trở lại control plane:
+kubectl uncordon <worker>
+```
+
+**Giải thích:** Thứ tự bắt buộc: **control plane trước, worker sau**. Control plane dùng `kubeadm upgrade apply`; worker dùng `kubeadm upgrade node`. Luôn drain trước khi nâng kubelet, uncordon sau.
+
+**Bẫy hay gặp:** Tuân version skew — kubelet không được mới hơn kube-apiserver. Nâng từng minor một (không nhảy 1.29→1.31).
+
+</Solution>
+
+</PracticeTask>
+
+<PracticeTask level="CKA" time="~8 phút" title="Backup và restore etcd snapshot">
+
+**Bối cảnh:** Trước khi thao tác rủi ro, cần snapshot etcd; sau sự cố cần restore.
+
+**Nhiệm vụ:** Tạo snapshot etcd và restore vào data-dir mới.
+
+<Solution>
+
+```bash
+# BACKUP — luôn dùng API v3 + cert của etcd
+ETCDCTL_API=3 etcdctl snapshot save /opt/etcd-backup.db \
+  --endpoints=https://127.0.0.1:2379 \
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+  --cert=/etc/kubernetes/pki/etcd/server.crt \
+  --key=/etc/kubernetes/pki/etcd/server.key
+
+ETCDCTL_API=3 etcdctl snapshot status /opt/etcd-backup.db --write-out=table
+
+# RESTORE — vào thư mục MỚI
+ETCDCTL_API=3 etcdctl snapshot restore /opt/etcd-backup.db \
+  --data-dir=/var/lib/etcd-restored
+
+# Rồi sửa static pod manifest để trỏ tới data-dir mới:
+#   /etc/kubernetes/manifests/etcd.yaml
+#   volume hostPath.path + --data-dir => /var/lib/etcd-restored
+# kubelet sẽ tự restart etcd với dữ liệu đã restore.
+```
+
+**Giải thích:** etcd là "bộ não" — snapshot là cách backup toàn bộ state cluster. Restore tạo data-dir mới; phải cập nhật manifest `etcd.yaml` (data-dir + hostPath volume) để etcd dùng data-dir đó.
+
+**Bẫy hay gặp:** Quên `ETCDCTL_API=3` (mặc định cũ khác lệnh). Đường dẫn cert sai là lỗi phổ biến nhất — lấy đúng từ `etcd.yaml`. Không restore đè lên data-dir đang chạy.
+
+</Solution>
+
+</PracticeTask>
+
+## Phần 2 — Trắc nghiệm nhanh
+
+<Quiz
+  title="Cluster Maintenance — 6 câu"
+  questions={[
+    {
+      id: 'm1',
+      question: 'Flag nào BẮT BUỘC khi drain một node có DaemonSet Pod?',
+      options: [
+        {id: 'a', text: '--force'},
+        {id: 'b', text: '--ignore-daemonsets'},
+        {id: 'c', text: '--grace-period=0'},
+        {id: 'd', text: '--all'},
+      ],
+      correct: ['b'],
+      explanation:
+        'DaemonSet Pod không thể drain (controller tạo lại ngay), nên phải --ignore-daemonsets, nếu không lệnh sẽ báo lỗi và dừng.',
+    },
+    {
+      id: 'm2',
+      question: 'Khác biệt giữa cordon và drain?',
+      options: [
+        {id: 'a', text: 'Giống hệt nhau'},
+        {id: 'b', text: 'cordon chỉ đánh dấu unschedulable; drain vừa cordon vừa evict Pod hiện có'},
+        {id: 'c', text: 'drain chỉ đánh dấu, cordon evict'},
+        {id: 'd', text: 'cordon xoá node'},
+      ],
+      correct: ['b'],
+      explanation:
+        'cordon = chặn Pod mới. drain = cordon + evict các Pod đang chạy để chuyển đi nơi khác.',
+    },
+    {
+      id: 'm3',
+      question: 'Thứ tự nâng cấp cluster bằng kubeadm là?',
+      options: [
+        {id: 'a', text: 'Worker trước, control plane sau'},
+        {id: 'b', text: 'Control plane trước (upgrade apply), rồi worker (upgrade node)'},
+        {id: 'c', text: 'Tất cả cùng lúc'},
+        {id: 'd', text: 'Chỉ cần nâng control plane'},
+      ],
+      correct: ['b'],
+      explanation:
+        'Luôn control plane trước với "kubeadm upgrade apply", sau đó từng worker với "kubeadm upgrade node".',
+    },
+    {
+      id: 'm4',
+      question: 'Lệnh backup etcd cần yếu tố nào?',
+      options: [
+        {id: 'a', text: 'ETCDCTL_API=3 + --cacert/--cert/--key + --endpoints'},
+        {id: 'b', text: 'Chỉ cần etcdctl snapshot save'},
+        {id: 'c', text: 'kubectl backup etcd'},
+        {id: 'd', text: 'Dừng kube-apiserver trước'},
+      ],
+      correct: ['a'],
+      explanation:
+        'Dùng API v3 và chứng chỉ TLS của etcd (lấy từ /etc/kubernetes/pki/etcd/ và manifest etcd.yaml).',
+    },
+    {
+      id: 'm5',
+      question: 'Sau khi restore snapshot vào data-dir mới, cần làm gì để etcd dùng nó?',
+      options: [
+        {id: 'a', text: 'Không cần gì thêm'},
+        {id: 'b', text: 'Sửa static pod manifest etcd.yaml (--data-dir + hostPath volume) trỏ tới data-dir mới'},
+        {id: 'c', text: 'Chạy kubeadm reset'},
+        {id: 'd', text: 'Xoá namespace kube-system'},
+      ],
+      correct: ['b'],
+      explanation:
+        'etcd chạy như static pod; cập nhật --data-dir và volume hostPath trong /etc/kubernetes/manifests/etcd.yaml → kubelet restart etcd với dữ liệu đã restore.',
+    },
+    {
+      id: 'm6',
+      question: 'Flag nào cho phép drain node có Pod dùng emptyDir (chấp nhận mất dữ liệu tạm)?',
+      options: [
+        {id: 'a', text: '--delete-emptydir-data'},
+        {id: 'b', text: '--force'},
+        {id: 'c', text: '--purge-volumes'},
+        {id: 'd', text: '--evict-local'},
+      ],
+      correct: ['a'],
+      explanation:
+        '--delete-emptydir-data xác nhận cho phép evict Pod có emptyDir (dữ liệu trong emptyDir sẽ mất).',
+    },
+  ]}
+/>
+
+:::note Nguồn ôn lại
+Xem lại [Cluster Maintenance](../cluster-maintenance/os-upgrade.md): OS upgrade/drain, [Cluster Upgrade](../cluster-maintenance/demo-upgrade.md), [Backup & Restore](../cluster-maintenance/backup-restore.md).
+:::
