@@ -128,4 +128,4 @@ rằng đang dư tài nguyên → gây xung đột.
 -   HPA: Scale theo CPU.
 -   VPA: Điều chỉnh theo Memory.
 -   
-![alt text](image.png)
+![Sơ đồ minh hoạ HPA và VPA](image.png)

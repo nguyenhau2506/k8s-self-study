@@ -24,12 +24,12 @@ const config = {
     supabaseAnonKey: process.env.SUPABASE_ANON_KEY || null,
   },
 
-  onBrokenLinks: 'warn',
+  onBrokenLinks: 'throw',
 
   markdown: {
     format: 'detect',
     hooks: {
-      onBrokenMarkdownLinks: 'warn',
+      onBrokenMarkdownLinks: 'throw',
     },
   },
 
