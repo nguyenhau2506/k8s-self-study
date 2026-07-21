@@ -7,10 +7,13 @@ const config = {
   tagline: 'Học Kubernetes theo lộ trình CKA — tiếng Việt, có bài tập tự chấm',
   favicon: 'img/favicon.svg',
 
-  url: 'https://k8s-self-study.vercel.app',
-  baseUrl: '/',
+  // For GitHub Pages the workflow sets BASE_URL=/k8s-self-study/.
+  // Local dev and Vercel use '/'.
+  url: 'https://nguyenhau2506.github.io',
+  baseUrl: process.env.BASE_URL || '/',
   organizationName: 'nguyenhau2506',
   projectName: 'k8s-self-study',
+  trailingSlash: false,
 
   onBrokenLinks: 'warn',
 
