@@ -28,7 +28,8 @@
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  width: 260px;
+  width: min(260px, 92vw);
+  max-width: 92vw;
   padding: 1rem;
   border-radius: 12px;
   background: var(--ifm-background-surface-color);
