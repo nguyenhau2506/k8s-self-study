@@ -24,7 +24,7 @@ export default function AuthButton() {
   if (user) {
     return (
       <div className={styles.wrap}>
-        <button className={styles.btn} type="button" onClick={() => setOpen((o) => !o)}>
+        <button className={styles.btn} type="button" aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
           👤 {user.email?.split('@')[0] || 'Tài khoản'}
         </button>
         {open && (
@@ -54,7 +54,7 @@ export default function AuthButton() {
 
   return (
     <div className={styles.wrap}>
-      <button className={styles.btn} type="button" onClick={() => setOpen((o) => !o)}>
+      <button className={styles.btn} type="button" aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
         Đăng nhập
       </button>
       {open && (
