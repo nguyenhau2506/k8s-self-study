@@ -1,4 +1,6 @@
 import React, {useState, useCallback} from 'react';
+import {useAuth} from '@site/src/lib/auth';
+import {getSupabase} from '@site/src/lib/supabase';
 import styles from './styles.module.css';
 
 const letter = (i) => String.fromCharCode(65 + i);
@@ -94,16 +96,38 @@ function Question({q, index, onResult}) {
   );
 }
 
-export default function Quiz({questions = [], title}) {
+export default function Quiz({questions = [], title, quizId}) {
+  const {user} = useAuth();
+  const qid = quizId || title || 'quiz';
   const [results, setResults] = useState({});
-  const onResult = useCallback((id, correct) => {
-    setResults((r) => {
-      const next = {...r};
-      if (correct === null) delete next[id];
-      else next[id] = correct;
-      return next;
-    });
-  }, []);
+  const onResult = useCallback(
+    (id, correct) => {
+      setResults((r) => {
+        const next = {...r};
+        if (correct === null) delete next[id];
+        else next[id] = correct;
+        return next;
+      });
+      // Best-effort persist when logged in + configured; never blocks or throws.
+      if (correct !== null && user) {
+        const sb = getSupabase();
+        if (sb) {
+          try {
+            sb
+              .from('quiz_attempts')
+              .insert({user_id: user.id, quiz_id: qid, question_id: String(id), correct})
+              .then(
+                () => {},
+                () => {},
+              );
+          } catch {
+            /* ignore */
+          }
+        }
+      }
+    },
+    [user, qid],
+  );
 
   const answered = Object.keys(results).length;
   const correct = Object.values(results).filter(Boolean).length;
