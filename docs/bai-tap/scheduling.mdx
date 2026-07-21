@@ -1,0 +1,222 @@
+---
+id: scheduling
+title: Bài tập Scheduling (CKA)
+sidebar_label: Bài tập Scheduling (CKA)
+sidebar_position: 5
+---
+
+import Quiz from '@site/src/components/Quiz';
+import {PracticeTask, Solution} from '@site/src/components/Practice';
+
+# 📅 Bài tập Scheduling — kiểu thi CKA
+
+Luyện điều khiển nơi Pod chạy: taints/tolerations, affinity, và resources/QoS — những dạng ra thi CKA rất thường xuyên.
+
+## Phần 1 — Bài tập thực hành
+
+<PracticeTask level="CKA" time="~6 phút" title="Taint node + Toleration cho Pod">
+
+**Bối cảnh:** Node `node01` chỉ dành cho workload đặc biệt. Bạn cần taint nó và cho một Pod được phép chạy lên đó.
+
+**Nhiệm vụ:**
+1. Taint `node01` với `dedicated=special:NoSchedule`.
+2. Tạo Pod `special-app` (image `nginx`) có toleration khớp taint đó.
+
+<Solution>
+
+```bash
+kubectl taint nodes node01 dedicated=special:NoSchedule
+```
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: special-app
+spec:
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "special"
+      effect: "NoSchedule"
+  containers:
+    - name: app
+      image: nginx:1.27
+```
+
+**Giải thích:** Taint `NoSchedule` "đẩy" mọi Pod không có toleration khớp. Toleration chỉ **cho phép** (không ép) Pod chạy lên node bị taint — muốn ép đúng node đó cần kèm `nodeSelector`/affinity.
+
+**Bẫy hay gặp:** Xoá taint thêm dấu trừ: `kubectl taint nodes node01 dedicated=special:NoSchedule-`. `NoExecute` còn evict Pod đang chạy nếu thiếu toleration.
+
+</Solution>
+
+</PracticeTask>
+
+<PracticeTask level="CKA" time="~6 phút" title="Node Affinity: ép Pod lên node có SSD">
+
+**Bối cảnh:** Chỉ node gắn nhãn `disktype=ssd` mới đủ nhanh cho DB.
+
+**Nhiệm vụ:**
+1. Gắn nhãn `disktype=ssd` cho `node01`.
+2. Tạo Pod `db` chỉ được xếp lên node có nhãn đó (requiredDuringScheduling).
+
+<Solution>
+
+```bash
+kubectl label nodes node01 disktype=ssd
+```
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: db
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: disktype
+                operator: In
+                values: ["ssd"]
+  containers:
+    - name: db
+      image: nginx:1.27
+```
+
+**Giải thích:** `requiredDuringScheduling...` là ràng buộc **cứng** — không có node khớp thì Pod `Pending`. `nodeSelector` cũng làm được nhưng affinity hỗ trợ toán tử (`In`, `NotIn`, `Exists`) và luật `preferred` (mềm).
+
+**Bẫy hay gặp:** `IgnoredDuringExecution` = nếu nhãn node đổi sau khi Pod đã chạy thì Pod không bị evict.
+
+</Solution>
+
+</PracticeTask>
+
+<PracticeTask level="CKA" time="~5 phút" title="Requests/Limits và QoS Guaranteed">
+
+**Bối cảnh:** Pod `cache` cần được đảm bảo tài nguyên (QoS **Guaranteed**) để không bị evict trước.
+
+**Nhiệm vụ:** Tạo Pod `cache` sao cho QoS = Guaranteed.
+
+<Solution>
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cache
+spec:
+  containers:
+    - name: redis
+      image: redis:7
+      resources:
+        requests:
+          cpu: "250m"
+          memory: "256Mi"
+        limits:
+          cpu: "250m"
+          memory: "256Mi"
+```
+
+```bash
+kubectl get pod cache -o jsonpath='{.status.qosClass}'   # => Guaranteed
+```
+
+**Giải thích:** QoS **Guaranteed** khi **mọi** container có `requests == limits` cho **cả** CPU và memory. Guaranteed bị evict sau cùng khi node thiếu tài nguyên.
+
+**Bẫy hay gặp:** Chỉ đặt limits mà thiếu requests → K8s tự set requests = limits (vẫn Guaranteed). Thiếu một trong hai (cpu/mem) hoặc requests≠limits → tụt xuống **Burstable**.
+
+</Solution>
+
+</PracticeTask>
+
+## Phần 2 — Trắc nghiệm nhanh
+
+<Quiz
+  title="Scheduling — 6 câu"
+  questions={[
+    {
+      id: 'sc1',
+      question: 'Taint effect nào EVICT cả Pod đang chạy nếu chúng không có toleration khớp?',
+      options: [
+        {id: 'a', text: 'NoSchedule'},
+        {id: 'b', text: 'PreferNoSchedule'},
+        {id: 'c', text: 'NoExecute'},
+        {id: 'd', text: 'EvictNow'},
+      ],
+      correct: ['c'],
+      explanation:
+        'NoExecute vừa chặn xếp mới vừa evict Pod đang chạy thiếu toleration. NoSchedule chỉ chặn Pod mới; PreferNoSchedule là mềm.',
+    },
+    {
+      id: 'sc2',
+      question: 'Pod Pending với event "0/3 nodes available: node(s) had untolerated taint". Xử lý đúng?',
+      options: [
+        {id: 'a', text: 'Tăng replicas'},
+        {id: 'b', text: 'Thêm toleration khớp taint (hoặc gỡ taint)'},
+        {id: 'c', text: 'Đổi image'},
+        {id: 'd', text: 'Tạo thêm Service'},
+      ],
+      correct: ['b'],
+      explanation:
+        'Thông báo cho biết mọi node đều bị taint mà Pod không tolerate. Giải pháp: thêm toleration phù hợp hoặc gỡ taint trên node.',
+    },
+    {
+      id: 'sc3',
+      question: 'Khác biệt chính giữa nodeSelector và nodeAffinity?',
+      options: [
+        {id: 'a', text: 'Giống hệt nhau'},
+        {id: 'b', text: 'nodeAffinity biểu đạt mạnh hơn: toán tử (In/NotIn/Exists) và luật preferred (mềm)'},
+        {id: 'c', text: 'nodeSelector là ràng buộc mềm'},
+        {id: 'd', text: 'nodeAffinity chỉ cho DaemonSet'},
+      ],
+      correct: ['b'],
+      explanation:
+        'nodeSelector chỉ match label đơn giản (AND, equality). nodeAffinity thêm operators và required/preferred (cứng/mềm).',
+    },
+    {
+      id: 'sc4',
+      question: 'Điều kiện để một Pod đạt QoS class Guaranteed?',
+      options: [
+        {id: 'a', text: 'Chỉ cần đặt limits'},
+        {id: 'b', text: 'Mọi container có requests == limits cho cả CPU và memory'},
+        {id: 'c', text: 'Chỉ cần requests'},
+        {id: 'd', text: 'Đặt priorityClassName cao'},
+      ],
+      correct: ['b'],
+      explanation:
+        'Guaranteed: tất cả container khai cả cpu & memory với requests == limits. Thiếu/khác → Burstable; không khai gì → BestEffort.',
+    },
+    {
+      id: 'sc5',
+      question: 'DaemonSet đảm bảo điều gì?',
+      options: [
+        {id: 'a', text: 'Đúng N replicas trong cluster'},
+        {id: 'b', text: 'Một Pod chạy trên MỖI node (khớp selector)'},
+        {id: 'c', text: 'Pod chạy theo lịch cron'},
+        {id: 'd', text: 'Chỉ chạy trên control plane'},
+      ],
+      correct: ['b'],
+      explanation:
+        'DaemonSet chạy đúng một bản sao trên mỗi node phù hợp — hợp cho log/metrics/CNI agent. Không dùng replicas.',
+    },
+    {
+      id: 'sc6',
+      question: 'Static Pod được quản lý bởi ai, và xuất hiện trong API server như thế nào?',
+      options: [
+        {id: 'a', text: 'kube-scheduler; là Pod thường'},
+        {id: 'b', text: 'kubelet đọc từ thư mục manifest; tạo "mirror pod" chỉ đọc trong API server'},
+        {id: 'c', text: 'controller-manager; không hiện trong API server'},
+        {id: 'd', text: 'etcd trực tiếp'},
+      ],
+      correct: ['b'],
+      explanation:
+        'kubelet quản lý static pod từ /etc/kubernetes/manifests (staticPodPath). Nó tạo mirror pod để bạn thấy qua kubectl, nhưng không sửa/xoá qua API được.',
+    },
+  ]}
+/>
+
+:::note Nguồn ôn lại
+Xem lại [Scheduling](../scheduling/taints-and-tolerations.md): Taints/Tolerations, [Affinity](../scheduling/affinity.md), [Resources & Limits](../scheduling/resource-requests-and-limits.md).
+:::
