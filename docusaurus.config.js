@@ -22,6 +22,11 @@ const config = {
   customFields: {
     supabaseUrl: process.env.SUPABASE_URL || null,
     supabaseAnonKey: process.env.SUPABASE_ANON_KEY || null,
+    // Giscus comments (GitHub Discussions). Null → comments hidden. See COMMENTS_SETUP.md.
+    giscusRepo: process.env.GISCUS_REPO || null,
+    giscusRepoId: process.env.GISCUS_REPO_ID || null,
+    giscusCategory: process.env.GISCUS_CATEGORY || null,
+    giscusCategoryId: process.env.GISCUS_CATEGORY_ID || null,
   },
 
   onBrokenLinks: 'throw',
