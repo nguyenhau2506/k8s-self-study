@@ -12,7 +12,7 @@ Mỗi file là một **vòng quiz** đầy đủ:
 
 | Vòng | Chủ đề | Trạng thái |
 |------|--------|-----------|
-| [Vòng 01](vong-01-introduction.md) | Introduction — Docker/containerd + K8s Architecture | ✅ Đã làm (2026-05-20) |
+| [Vòng 01](vong-01-introduction.mdx) | Introduction — Docker/containerd + K8s Architecture | 🎯 Quiz tương tác (8 câu) |
 | [Vòng 01b](vong-01b-introduction-retake.md) | Quiz lại 3 câu — Desired State, 6 component, runc/containerd | ✅ Đã làm (2026-05-20) |
 
 ## Quy ước

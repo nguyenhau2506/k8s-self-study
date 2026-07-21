@@ -1,0 +1,136 @@
+---
+id: vong-01-introduction
+title: Vòng 01 — Introduction
+sidebar_position: 1
+---
+
+import Quiz from '@site/src/components/Quiz';
+
+# Vòng 01 — Introduction
+
+**Phạm vi:** [Docker & containerd](../introduction/01-Dockers-containerD.md) · [Kubernetes Architecture](../introduction/02-k8s-architecture.md)
+
+Tự kiểm tra kiến thức chặng **Introduction**. Chọn đáp án rồi bấm **Kiểm tra** để xem đúng/sai kèm giải thích. Có câu chọn nhiều đáp án.
+
+<Quiz
+  title="Introduction — 8 câu"
+  questions={[
+    {
+      id: 'q1',
+      question: 'Vì sao Kubernetes ngừng hỗ trợ Docker (Dockershim deprecated từ v1.24)?',
+      options: [
+        {id: 'a', text: 'Vì Docker không còn được phát triển nữa'},
+        {id: 'b', text: 'Vì Docker không hỗ trợ chuẩn CRI, buộc K8s phải bảo trì Dockershim làm lớp phiên dịch'},
+        {id: 'c', text: 'Vì Docker chậm hơn mọi container runtime khác'},
+        {id: 'd', text: 'Vì Docker không thể chạy trên Linux'},
+      ],
+      correct: ['b'],
+      explanation:
+        'Docker không nói được "tiếng" CRI nên K8s phải viết Dockershim để dịch CRI ↔ Docker API — gánh nặng bảo trì. Trong khi đó containerd (vốn là ruột của Docker) đã tuân CRI sẵn nên K8s dùng thẳng.',
+    },
+    {
+      id: 'q2',
+      question: 'Trong chuỗi Kubelet → CRI → containerd → runc, thành phần runc chịu trách nhiệm gì?',
+      options: [
+        {id: 'a', text: 'Dịch giữa CRI và Docker API'},
+        {id: 'b', text: 'Pull image và quản lý snapshot'},
+        {id: 'c', text: 'Thực sự tạo container: tạo namespace, cgroup, mount rootfs theo chuẩn OCI'},
+        {id: 'd', text: 'Định tuyến traffic mạng cho Pod'},
+      ],
+      correct: ['c'],
+      explanation:
+        'runc là low-level runtime — "công nhân" thực sự clone() process theo chuẩn OCI. containerd là high-level runtime ("quản gia": pull image, quản lý snapshot, gọi runc). Dockershim chỉ là adapter (đã khai tử).',
+    },
+    {
+      id: 'q3',
+      question: 'containerd khác Dockershim như thế nào?',
+      options: [
+        {id: 'a', text: 'Chúng là một, chỉ khác tên gọi'},
+        {id: 'b', text: 'containerd là runtime thật sự quản lý vòng đời container; Dockershim chỉ là adapter dịch CRI ↔ Docker API, không chạy container'},
+        {id: 'c', text: 'Dockershim chạy container, còn containerd chỉ pull image'},
+        {id: 'd', text: 'containerd chỉ dùng được trên Windows'},
+      ],
+      correct: ['b'],
+      explanation:
+        'Câu thần chú: Dockershim = adapter (RIP) · containerd = quản gia · runc = công nhân. containerd quản lý vòng đời container thật sự; Dockershim chỉ phiên dịch.',
+    },
+    {
+      id: 'q4',
+      question: 'Thành phần nào chịu trách nhiệm kéo Actual State về Desired State?',
+      options: [
+        {id: 'a', text: 'kube-scheduler'},
+        {id: 'b', text: 'etcd'},
+        {id: 'c', text: 'kube-controller-manager, qua reconciliation loop'},
+        {id: 'd', text: 'kube-proxy'},
+      ],
+      correct: ['c'],
+      explanation:
+        'Desired state (khai báo YAML, lưu ở etcd) vs Actual state (thực tế đang chạy). kube-controller-manager chạy vòng lặp reconcile liên tục để kéo actual về desired → self-healing. Ví dụ replicas: 3, chết 1 → ReplicaSet controller đẻ lại Pod.',
+    },
+    {
+      id: 'q5',
+      question: 'Đâu là các thành phần thuộc Control Plane? (chọn nhiều)',
+      options: [
+        {id: 'a', text: 'kube-apiserver'},
+        {id: 'b', text: 'etcd'},
+        {id: 'c', text: 'kubelet'},
+        {id: 'd', text: 'kube-scheduler'},
+        {id: 'e', text: 'kube-proxy'},
+        {id: 'f', text: 'kube-controller-manager'},
+      ],
+      correct: ['a', 'b', 'd', 'f'],
+      explanation:
+        'Control Plane: kube-apiserver, etcd, kube-scheduler, kube-controller-manager. Worker Node: kubelet, kube-proxy.',
+    },
+    {
+      id: 'q6',
+      question: 'Phát biểu nào về kube-scheduler là ĐÚNG?',
+      options: [
+        {id: 'a', text: 'Scheduler tự tay tạo Pod và container'},
+        {id: 'b', text: 'Scheduler chọn Node phù hợp cho Pod chưa có Node rồi ghi nodeName vào etcd; kubelet mới thực sự tạo container'},
+        {id: 'c', text: 'Scheduler chạy trên mỗi worker node'},
+        {id: 'd', text: 'Scheduler định tuyến network cho Service'},
+      ],
+      correct: ['b'],
+      explanation:
+        'Bẫy kinh điển: Scheduler CHỌN Node ≠ TẠO Pod. Nó chỉ gán nodeName và ghi vào etcd; kubelet ở Node đó watch thấy Pod của mình rồi gọi containerd tạo container.',
+    },
+    {
+      id: 'q7',
+      question: 'Trên worker node dùng containerd, "docker ps" báo command not found. Lệnh thay thế và file config đúng là?',
+      options: [
+        {id: 'a', text: 'docker-compose ps ; /etc/docker/daemon.json'},
+        {id: 'b', text: 'crictl ps (hoặc nerdctl ps) ; /etc/containerd/config.toml'},
+        {id: 'c', text: 'kubectl ps ; /etc/kubernetes/config'},
+        {id: 'd', text: 'ctr list ; /etc/crictl.yaml (duy nhất)'},
+      ],
+      correct: ['b'],
+      explanation:
+        'crictl (chuẩn CRI, tự vào namespace k8s.io) hoặc nerdctl (thêm --namespace k8s.io). File config là /etc/containerd/config.toml (thay cho /etc/docker/daemon.json); sửa xong: sudo systemctl restart containerd.',
+    },
+    {
+      id: 'q8',
+      question: 'etcd mất hoàn toàn nhưng apiserver vẫn chạy. Điều gì ĐÚNG? (chọn nhiều)',
+      options: [
+        {id: 'a', text: 'Pod đang chạy vẫn tiếp tục phục vụ traffic'},
+        {id: 'b', text: 'kubectl get pods vẫn hoạt động bình thường'},
+        {id: 'c', text: 'Self-healing khi Node chết bị mất'},
+        {id: 'd', text: 'Không thể scale / deploy / update'},
+        {id: 'e', text: 'kube-proxy ngừng route traffic ngay lập tức'},
+      ],
+      correct: ['a', 'c', 'd'],
+      explanation:
+        'etcd = bộ não, không phải máu nuôi container. Pod đang chạy (do containerd) vẫn sống, iptables/IPVS rules vẫn route traffic. Nhưng khả năng "biết" và "quyết định" mất: kubectl get pods fail (đọc từ etcd), không self-heal, không thay đổi được gì → frozen cluster.',
+    },
+  ]}
+/>
+
+## 🧠 Câu thần chú cần nhớ
+
+> - **Dockershim** = adapter (RIP) · **containerd** = quản gia · **runc** = công nhân.
+> - Bạn khai báo **"muốn gì"** → K8s liên tục so với **"đang có gì"** → **controller-manager** kéo về mãi mãi.
+> - **etcd = bộ não, không phải máu nuôi container.** Mất etcd ≠ mất workload; mất etcd = mất khả năng *biết* và *quyết định*.
+
+:::tip Ôn lại lý thuyết
+Chưa chắc câu nào? Xem lại [Docker & containerd](../introduction/01-Dockers-containerD.md) và [Kubernetes Architecture](../introduction/02-k8s-architecture.md).
+:::
