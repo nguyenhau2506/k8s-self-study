@@ -10,6 +10,7 @@ Khu vực luyện tập của **Kubernaut**: **quiz tự chấm** (trắc nghi�
 | [Vòng 01b — Introduction (ôn lại)](vong-01b-introduction-retake.md) | Desired State, 6 component, runc/containerd | 📝 Ôn nhanh |
 | [Bài tập Core Concepts (CKA)](core-concepts.mdx) | Pod · Service · Deployment · PV/PVC | 🧪 3 thực hành + quiz 6 câu |
 | [Bài tập Scheduling (CKA)](scheduling.mdx) | Taints · Affinity · Resources/QoS | 🧪 3 thực hành + quiz 6 câu |
+| [Bài tập App Lifecycle (CKA)](app-lifecycle.mdx) | Rolling update · ConfigMap/Secret · HPA | 🧪 3 thực hành + quiz 6 câu |
 | [Bài tập Security (CKS)](security-cks.mdx) | NetworkPolicy · securityContext · RBAC | 🧪 3 thực hành + quiz 6 câu |
 
 > Đang bổ sung dần bài tập thực hành cho tất cả các chặng: Core Concepts, Scheduling, App Lifecycle, Cluster Maintenance…

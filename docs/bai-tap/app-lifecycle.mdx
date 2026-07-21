@@ -1,0 +1,238 @@
+---
+id: app-lifecycle
+title: Bài tập App Lifecycle (CKA)
+sidebar_label: Bài tập App Lifecycle (CKA)
+sidebar_position: 6
+---
+
+import Quiz from '@site/src/components/Quiz';
+import {PracticeTask, Solution} from '@site/src/components/Practice';
+
+# 🔄 Bài tập Application Lifecycle — kiểu thi CKA
+
+Luyện vòng đời ứng dụng: rolling update/rollback, ConfigMap/Secret, và autoscaling — cụm kỹ năng ra thi CKA/CKAD liên tục.
+
+## Phần 1 — Bài tập thực hành
+
+<PracticeTask level="CKA" time="~6 phút" title="Rolling update + rollback">
+
+**Bối cảnh:** Deployment `web` đang chạy `nginx:1.25`. Cần nâng lên `1.27`, theo dõi rollout, rồi rollback vì phát hiện lỗi.
+
+**Nhiệm vụ:**
+1. Cập nhật image `web` sang `nginx:1.27` và theo dõi rollout.
+2. Rollback về bản trước và xác nhận.
+
+<Solution>
+
+```bash
+# Cập nhật image + theo dõi
+kubectl set image deployment/web nginx=nginx:1.27
+kubectl rollout status deployment/web
+
+# Xem lịch sử revision
+kubectl rollout history deployment/web
+
+# Rollback về revision trước + xác nhận
+kubectl rollout undo deployment/web
+kubectl rollout status deployment/web
+kubectl get deploy web -o jsonpath='{.spec.template.spec.containers[0].image}'
+```
+
+**Giải thích:** Deployment mặc định dùng chiến lược `RollingUpdate` (`maxSurge=25%`, `maxUnavailable=25%`) — tạo ReplicaSet mới, chuyển Pod dần, giữ lịch sử để `rollout undo`. `rollout undo --to-revision=N` để về revision cụ thể.
+
+**Bẫy hay gặp:** Tên container trong `set image` (`nginx=`) phải khớp `spec.containers[].name`, không phải tên Deployment.
+
+</Solution>
+
+</PracticeTask>
+
+<PracticeTask level="CKA" time="~7 phút" title="ConfigMap + Secret vào Pod (env & volume)">
+
+**Bối cảnh:** App cần biến `APP_MODE=prod` (ConfigMap) và `API_KEY` bí mật (Secret), đồng thời đọc file cấu hình từ ConfigMap.
+
+**Nhiệm vụ:**
+1. Tạo ConfigMap `app-config` (`APP_MODE=prod`) và Secret `app-secret` (`API_KEY=s3cr3t`).
+2. Tạo Pod nạp `APP_MODE` và `API_KEY` làm env, và mount `app-config` làm volume tại `/etc/appcfg`.
+
+<Solution>
+
+```bash
+kubectl create configmap app-config --from-literal=APP_MODE=prod
+kubectl create secret generic app-secret --from-literal=API_KEY=s3cr3t
+```
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app
+spec:
+  containers:
+    - name: app
+      image: nginx:1.27
+      env:
+        - name: APP_MODE
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: APP_MODE
+        - name: API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: API_KEY
+      volumeMounts:
+        - name: cfg
+          mountPath: /etc/appcfg
+          readOnly: true
+  volumes:
+    - name: cfg
+      configMap:
+        name: app-config
+```
+
+**Giải thích:** Env riêng lẻ dùng `configMapKeyRef`/`secretKeyRef`; nạp cả ConfigMap bằng `envFrom`. Khi mount làm volume, mỗi key thành một file (`/etc/appcfg/APP_MODE`).
+
+**Bẫy hay gặp:** Secret chỉ **base64** (không mã hoá) — cần bật encryption-at-rest ở etcd. Sửa ConfigMap dùng qua env **không** tự cập nhật Pod đang chạy (phải rollout lại); mount volume thì tự cập nhật sau ít giây.
+
+</Solution>
+
+</PracticeTask>
+
+<PracticeTask level="CKA" time="~5 phút" title="HorizontalPodAutoscaler theo CPU">
+
+**Bối cảnh:** Deployment `web` cần tự scale 2→10 Pod khi CPU vượt 70%.
+
+**Nhiệm vụ:** Tạo HPA cho `web` (min 2, max 10, target CPU 70%). Yêu cầu Deployment đã khai `resources.requests.cpu`.
+
+<Solution>
+
+```bash
+# Deployment phải có requests.cpu thì HPA mới tính %CPU được
+kubectl set resources deployment/web --requests=cpu=200m
+
+kubectl autoscale deployment web --min=2 --max=10 --cpu-percent=70
+
+kubectl get hpa web        # xem TARGETS / REPLICAS
+```
+
+Tương đương YAML:
+
+```yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: web
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: web
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+```
+
+**Giải thích:** HPA đọc metric qua **metrics-server**. `%CPU` = usage / `requests.cpu`, nên thiếu requests thì HPA hiển thị `<unknown>` và không scale.
+
+**Bẫy hay gặp:** Không có metrics-server cài trong cluster → HPA không hoạt động. Đây là lỗi kinh điển khi luyện thi.
+
+</Solution>
+
+</PracticeTask>
+
+## Phần 2 — Trắc nghiệm nhanh
+
+<Quiz
+  title="App Lifecycle — 6 câu"
+  questions={[
+    {
+      id: 'a1',
+      question: 'Trong RollingUpdate, field nào giới hạn số Pod có thể KHÔNG khả dụng trong lúc cập nhật?',
+      options: [
+        {id: 'a', text: 'maxSurge'},
+        {id: 'b', text: 'maxUnavailable'},
+        {id: 'c', text: 'replicas'},
+        {id: 'd', text: 'minReadySeconds'},
+      ],
+      correct: ['b'],
+      explanation:
+        'maxUnavailable = số/tỷ lệ Pod được phép thiếu trong lúc rollout. maxSurge = số Pod được tạo vượt mức mong muốn.',
+    },
+    {
+      id: 'a2',
+      question: 'Lệnh rollback Deployment về revision trước là?',
+      options: [
+        {id: 'a', text: 'kubectl rollout undo deployment/web'},
+        {id: 'b', text: 'kubectl rollback deployment/web'},
+        {id: 'c', text: 'kubectl delete deployment/web'},
+        {id: 'd', text: 'kubectl apply --previous'},
+      ],
+      correct: ['a'],
+      explanation:
+        'kubectl rollout undo deployment/web (thêm --to-revision=N để về bản cụ thể; xem bằng rollout history).',
+    },
+    {
+      id: 'a3',
+      question: 'Cách đúng để nạp MỘT key của ConfigMap thành biến môi trường?',
+      options: [
+        {id: 'a', text: 'volumeMounts'},
+        {id: 'b', text: 'env.valueFrom.configMapKeyRef'},
+        {id: 'c', text: 'args'},
+        {id: 'd', text: 'command'},
+      ],
+      correct: ['b'],
+      explanation:
+        'env[].valueFrom.configMapKeyRef trỏ tới name+key. Muốn nạp tất cả key một lần dùng envFrom.configMapRef.',
+    },
+    {
+      id: 'a4',
+      question: 'Dữ liệu trong Secret được lưu như thế nào theo mặc định?',
+      options: [
+        {id: 'a', text: 'Mã hoá AES tự động'},
+        {id: 'b', text: 'Chỉ mã hoá base64 (không phải mã hoá thật) — cần bật encryption-at-rest'},
+        {id: 'c', text: 'Hash SHA-256'},
+        {id: 'd', text: 'Plaintext hoàn toàn, không encode'},
+      ],
+      correct: ['b'],
+      explanation:
+        'Secret chỉ base64-encode. Muốn an toàn trong etcd phải cấu hình EncryptionConfiguration (encryption at rest).',
+    },
+    {
+      id: 'a5',
+      question: 'HorizontalPodAutoscaler cần thành phần nào để đọc CPU/memory usage?',
+      options: [
+        {id: 'a', text: 'kube-proxy'},
+        {id: 'b', text: 'metrics-server'},
+        {id: 'c', text: 'etcd'},
+        {id: 'd', text: 'CoreDNS'},
+      ],
+      correct: ['b'],
+      explanation:
+        'HPA đọc metric qua metrics-server (hoặc adapter custom/external). Thiếu metrics-server → HPA hiện <unknown>, không scale.',
+    },
+    {
+      id: 'a6',
+      question: 'Init container hoạt động thế nào so với app container?',
+      options: [
+        {id: 'a', text: 'Chạy song song với app container'},
+        {id: 'b', text: 'Chạy tuần tự tới khi hoàn tất TRƯỚC khi app container khởi động'},
+        {id: 'c', text: 'Chạy sau khi app container sẵn sàng'},
+        {id: 'd', text: 'Chỉ chạy khi app container crash'},
+      ],
+      correct: ['b'],
+      explanation:
+        'Các init container chạy lần lượt tới khi thành công; chỉ khi tất cả xong thì app container mới bắt đầu. Hợp cho setup/chờ dependency.',
+    },
+  ]}
+/>
+
+:::note Nguồn ôn lại
+Xem lại [App Lifecycle](../application-manager/rolling-update-and-rollback.md): [ConfigMap](../application-manager/config-map.md), [Secret](../application-manager/secret.md), [HPA & VPA](../application-manager/hpa-and-vpa.md).
+:::
