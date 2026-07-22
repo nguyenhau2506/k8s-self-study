@@ -1,3 +1,17 @@
+## 🚀 Orbit — Self-study hub (Next.js)
+
+Dự án đã tiến hoá thành **Orbit**, một self-study hub đa môn với **cổng đăng nhập theo lời mời (invite-only)** và **bài học public để dùng thử**, nằm ở thư mục [`web/`](web/). Kubernetes (CKA → CKS) là khoá đầu tiên — 57 bài + bài tập hands-on.
+
+```bash
+cd web && npm install && npm run dev   # http://localhost:3000
+```
+
+Cấu hình đăng nhập/Supabase + deploy Vercel: xem [`web/WEB_SETUP.md`](web/WEB_SETUP.md). "Cấp tài khoản" = thêm email trong Supabase → Auth → Users.
+
+> Site **Docusaurus** ở thư mục gốc bên dưới giờ là bản **cũ/tham khảo**, được Orbit thay thế (vẫn giữ lại để tra cứu nội dung).
+
+---
+
 <p align="center">
   <img src="https://kubernetes.io/images/kubernetes-horizontal-color.png" width="400" alt="Kubernetes Logo"/>
 </p>
