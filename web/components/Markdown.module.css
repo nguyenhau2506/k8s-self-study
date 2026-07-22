@@ -1,0 +1,78 @@
+.md {
+  line-height: 1.7;
+  color: #cbd5e1;
+}
+.md h1,
+.md h2,
+.md h3,
+.md h4 {
+  color: #fff;
+  font-weight: 700;
+  margin: 1.6rem 0 0.75rem;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+.md h1 {
+  font-size: 1.9rem;
+}
+.md h2 {
+  font-size: 1.5rem;
+}
+.md h3 {
+  font-size: 1.25rem;
+}
+.md p {
+  margin: 0.75rem 0;
+}
+.md a {
+  color: #22d3ee;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.md pre {
+  background: #0a0d13;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  padding: 1rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+.md code {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.9em;
+}
+.md :not(pre) > code {
+  background: #1e293b;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+}
+.md table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  display: block;
+  overflow-x: auto;
+}
+.md th,
+.md td {
+  border: 1px solid #1e293b;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+.md th {
+  background: #111827;
+}
+.md ul,
+.md ol {
+  margin: 0.75rem 0;
+  padding-left: 1.5rem;
+}
+.md li {
+  margin: 0.25rem 0;
+}
+.md blockquote {
+  border-left: 3px solid #22d3ee;
+  padding-left: 1rem;
+  color: #94a3b8;
+  margin: 1rem 0;
+}
