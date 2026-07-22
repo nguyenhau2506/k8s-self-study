@@ -26,6 +26,12 @@ export default async function CoursePage({
         </div>
         <p className="mt-4 text-slate-400">{course.description}</p>
 
+        <Link
+          href={`/learn/${course.slug}/exercises`}
+          className="mt-6 inline-flex items-center gap-2 rounded-lg border border-cyan-700 bg-cyan-500/10 px-4 py-2 text-sm font-semibold text-cyan-300 hover:bg-cyan-500/20">
+          🧪 Bài tập & quiz (học viên)
+        </Link>
+
         <div className="mt-10 space-y-8">
           {course.sections.map((section) => (
             <section key={section.title}>
