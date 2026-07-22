@@ -42,3 +42,7 @@ npm run dev          # http://localhost:3000
 
 ## Bảo mật
 - Publishable/anon key nhúng client là an toàn (được RLS + auth bảo vệ). **DB password KHÔNG** nằm ở đây — và nhớ **đổi** mật khẩu DB đã lộ trong chat.
+
+## Tính năng tiến độ & điểm quiz (SQL)
+
+"Đánh dấu đã học" và lưu điểm quiz cần chạy migration: dán `web/supabase/migrations/0001_init.sql` vào **Supabase → SQL Editor → Run**. Tiến độ lưu theo `lesson_id` dạng `"course/slug"` (vd `kubernetes/pod`) trong bảng `lesson_progress`; điểm quiz trong `quiz_attempts`. RLS bật: mỗi user chỉ thấy dữ liệu của mình. Chưa chạy migration thì app vẫn chạy, chỉ là tiến độ hiển thị 0%.

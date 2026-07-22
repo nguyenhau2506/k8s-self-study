@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type {Course, Lesson} from '@/content/courses';
 import Markdown from '@/components/Markdown';
+import MarkComplete from '@/components/MarkComplete';
 
 type Mode = 'member' | 'preview';
 
@@ -74,6 +75,9 @@ export default function LessonView({
             </Link>{' '}
             để mở toàn bộ khoá.
           </div>
+        )}
+        {mode === 'member' && (
+          <MarkComplete lessonId={`${course.slug}/${currentSlug}`} />
         )}
         <Markdown>{content}</Markdown>
         <div className="mt-10 flex justify-between gap-4 border-t border-slate-800 pt-6 text-sm">

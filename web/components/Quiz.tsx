@@ -1,6 +1,7 @@
 'use client';
 
 import {useCallback, useState} from 'react';
+import {createClient} from '@/lib/supabase/client';
 
 export type QuizQuestion = {
   id: string;
@@ -116,20 +117,45 @@ function Question({
 
 export default function Quiz({
   title,
+  quizId,
   questions,
 }: {
   title?: string;
+  quizId?: string;
   questions: QuizQuestion[];
 }) {
   const [results, setResults] = useState<Record<string, boolean>>({});
-  const onResult = useCallback((id: string, correct: boolean | null) => {
-    setResults((r) => {
-      const next = {...r};
-      if (correct === null) delete next[id];
-      else next[id] = correct;
-      return next;
-    });
-  }, []);
+  const onResult = useCallback(
+    (id: string, correct: boolean | null) => {
+      setResults((r) => {
+        const next = {...r};
+        if (correct === null) delete next[id];
+        else next[id] = correct;
+        return next;
+      });
+      // Best-effort persist of the attempt (no-op if not logged in).
+      if (correct !== null) {
+        void (async () => {
+          try {
+            const sb = createClient();
+            const {
+              data: {user},
+            } = await sb.auth.getUser();
+            if (!user) return;
+            await sb.from('quiz_attempts').insert({
+              user_id: user.id,
+              quiz_id: quizId ?? title ?? 'quiz',
+              question_id: id,
+              correct,
+            });
+          } catch {
+            /* ignore */
+          }
+        })();
+      }
+    },
+    [quizId, title],
+  );
 
   const answered = Object.keys(results).length;
   const correct = Object.values(results).filter(Boolean).length;
