@@ -96,7 +96,6 @@ const config = {
           label: 'GitHub',
           position: 'right',
         },
-        {type: 'custom-authButton', position: 'right'},
       ],
     },
     footer: {

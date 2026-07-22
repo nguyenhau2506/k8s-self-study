@@ -1,0 +1,10 @@
+.colorModeToggle {
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 996px) {
+  .colorModeToggle {
+    display: none;
+  }
+}
